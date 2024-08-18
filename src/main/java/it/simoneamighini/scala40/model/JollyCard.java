@@ -11,4 +11,9 @@ public class JollyCard extends Card {
     SymbolColor getSymbolColor() {
         return symbolColor;
     }
+
+    @Override
+    int getDefaultPoints() {
+        return 25;
+    }
 }
