@@ -26,38 +26,7 @@ public class Sequence extends Group {
         boolean noSequenceCrossover = true;
 
         if (noMoreThanOneJolly & betweenThreeAndFourteenCards) {
-            // replace the jolly (if present) with the card that it substitutes
-            List<FrenchCard> cardsWithoutJolly = new ArrayList<>();
-
-            for (int i = 0; i < cards.size() - 1; i++) {
-                Card currentCard = cards.get(i);
-                Card nextCard = cards.get(i + 1);
-
-                if (currentCard instanceof FrenchCard) {
-                    cardsWithoutJolly.add((FrenchCard) currentCard);
-                } else if (currentCard instanceof JollyCard) {
-                    cardsWithoutJolly.add(
-                            new FrenchCard(
-                                    ((FrenchCard) nextCard).getSuit(),
-                                    ((FrenchCard) nextCard).getRank().previous(),
-                                    BackColor.DARK
-                            )
-                    );
-                }
-            }
-            Card lastCard = cards.getLast();
-            if (lastCard instanceof  FrenchCard) {
-                cardsWithoutJolly.add((FrenchCard) lastCard);
-            } else if (cards.getLast() instanceof JollyCard) {
-                FrenchCard secondLastCard = (FrenchCard) cards.get(cards.size() - 2);
-                cardsWithoutJolly.add(
-                        new FrenchCard(
-                                secondLastCard.getSuit(),
-                                secondLastCard.getRank().next(),
-                                BackColor.DARK
-                        )
-                );
-            }
+            List<FrenchCard> cardsWithoutJolly = cardsWithoutJolly(cards);
 
             // check that the new sequence has the cards in the right order
             for (int i = 0; i < cardsWithoutJolly.size() - 1; i++) {
@@ -105,5 +74,70 @@ public class Sequence extends Group {
         if (!checkPassed) {
             throw new InvalidGroupException("Invalid sequence");
         }
+    }
+
+    private List<FrenchCard> cardsWithoutJolly(List<Card> cards) {
+        List<FrenchCard> cardsWithoutJolly = new ArrayList<>();
+
+        for (int i = 0; i < cards.size() - 1; i++) {
+            Card currentCard = cards.get(i);
+            Card nextCard = cards.get(i + 1);
+
+            if (currentCard instanceof FrenchCard) {
+                cardsWithoutJolly.add((FrenchCard) currentCard);
+            } else if (currentCard instanceof JollyCard) {
+                cardsWithoutJolly.add(
+                        new FrenchCard(
+                                ((FrenchCard) nextCard).getSuit(),
+                                ((FrenchCard) nextCard).getRank().previous(),
+                                BackColor.DARK
+                        )
+                );
+            }
+        }
+        Card lastCard = cards.getLast();
+        if (lastCard instanceof  FrenchCard) {
+            cardsWithoutJolly.add((FrenchCard) lastCard);
+        } else if (cards.getLast() instanceof JollyCard) {
+            FrenchCard secondLastCard = (FrenchCard) cards.get(cards.size() - 2);
+            cardsWithoutJolly.add(
+                    new FrenchCard(
+                            secondLastCard.getSuit(),
+                            secondLastCard.getRank().next(),
+                            BackColor.DARK
+                    )
+            );
+        }
+
+        return cardsWithoutJolly;
+    }
+
+    @Override
+    int getPoints() {
+        int totalPoints = 0;
+        List<FrenchCard> cardsWithoutJolly = cardsWithoutJolly(super.getCards());
+
+        for (int i = 0; i < cardsWithoutJolly.size() - 1; i++) {
+            FrenchCard currentCard = cardsWithoutJolly.get(i);
+
+            // an ACE at the beginning always gives 1 point instead of 11 points (default points)
+            if (currentCard.getRank().equals(Rank.ACE) && i == 0) {
+                totalPoints += 1;
+            } else {
+                totalPoints += currentCard.getDefaultPoints();
+            }
+        }
+
+        return totalPoints;
+    }
+
+    @Override
+    void accept(SingleCardAttacher visitor) {
+        visitor.executeAttachmentOn(this);
+    }
+
+    @Override
+    void accept(GroupAttacher visitor) {
+        visitor.executeAttachmentOn(this);
     }
 }

@@ -13,4 +13,10 @@ public abstract class Group {
     public List<Card> getCards() {
         return new ArrayList<>(cards);
     }
+
+    abstract int getPoints();
+
+    abstract void accept(SingleCardAttacher visitor);
+
+    abstract void accept(GroupAttacher visitor);
 }

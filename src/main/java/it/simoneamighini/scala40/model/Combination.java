@@ -40,4 +40,22 @@ public class Combination extends Group {
             throw new InvalidGroupException("Invalid combination");
         }
     }
+
+    @Override
+    int getPoints() {
+        List<Card> cards = super.getCards();
+        Card firstCard = cards.getFirst();
+
+        return cards.size() * firstCard.getDefaultPoints();
+    }
+
+    @Override
+    void accept(SingleCardAttacher visitor) {
+        visitor.executeAttachmentOn(this);
+    }
+
+    @Override
+    void accept(GroupAttacher visitor) {
+        visitor.executeAttachmentOn(this);
+    }
 }
