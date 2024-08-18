@@ -10,4 +10,11 @@ public abstract class Card {
     public String getName() {
         return name;
     }
+
+    abstract int getDefaultPoints();
+
+    @Override
+    public boolean equals(Object object) {
+        return (object instanceof Card) && (((Card) object).name.equals(name));
+    }
 }

@@ -17,4 +17,14 @@ public class FrenchCard extends Card {
     Rank getRank() {
         return rank;
     }
+
+    @Override
+    int getDefaultPoints() {
+        return switch (rank) {
+            case JACK, QUEEN, KING -> 10;
+            case ACE -> 11;
+            default -> // from TWO to TEN
+                    rank.ordinal() + 1;
+        };
+    }
 }
