@@ -1,0 +1,51 @@
+* {
+    -fx-font-family: Cantarell;
+    -fx-font-weight: bold;
+}
+
+AnchorPane {
+    -fx-background-color: rgb(90, 168, 135);
+}
+
+.normal-text {
+    -fx-font-size: 18pt;
+}
+
+.main-title {
+    -fx-font-family: Serif;
+    -fx-font-style: italic;
+    -fx-font-size: 80pt;
+}
+
+.scene-title {
+    -fx-font-size: 20pt;
+}
+
+.button {
+    -fx-background-color: rgb(130, 238, 222);
+    -fx-text-fill: rgb(0, 0, 0);
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-text-fill: rgb(255, 2, 2);
+}
+
+.big-button {
+    .button;
+    -fx-min-height: 60px;
+    -fx-pref-width: 320px;
+    -fx-font-size: 20pt;
+}
+
+.small-button {
+    .button;
+    -fx-min-height: 30px;
+    -fx-pref-width: 160px;
+    -fx-font-size: 14pt;
+}
+
+.text-field {
+    -fx-max-width: 320px;
+    -fx-min-height: 50px;
+}

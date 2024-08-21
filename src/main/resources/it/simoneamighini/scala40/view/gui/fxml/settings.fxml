@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="scene" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+    <Button layoutX="1106.0" layoutY="14.0" mnemonicParsing="false" prefWidth="201.0" styleClass="small-button" text="Indietro" />
+   <Text layoutX="14.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="scene-title" text="Impostazioni" />
+    <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
+        <VBox alignment="CENTER" spacing="10.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Indirizzo IP del server:" />
+            <TextField alignment="CENTER" styleClass="text-field" />
+        </VBox>
+        <VBox alignment="CENTER" spacing="10.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Porta:" />
+            <TextField alignment="CENTER" styleClass="text-field" />
+        </VBox>
+    </VBox>
+</AnchorPane>
