@@ -31,7 +31,7 @@ public class Server extends Endpoint {
             try {
                 instance = new Server(port);
             } catch (IOException exception) {
-                instance.getLogger().severe("Could not instantiate server on port " + port);
+                System.err.println("Could not instantiate server on port " + port + ".");
                 return null;
             }
         }
