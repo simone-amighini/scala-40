@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import it.simoneamighini.scala40.networking.Server;
+import it.simoneamighini.scala40.view.gui.GuiMain;
 
 public class ClientMain {
     public static class Arguments {
@@ -17,7 +18,7 @@ public class ClientMain {
                 names = {"--server-port", "-p"},
                 description = "Changes the TCP port to which to connect in order to reach the server."
         )
-        public int serverPort = Server.DEFAULT_PORT;
+        public String serverPort = Integer.toString(Server.DEFAULT_PORT);
 
         @Parameter(
                 names = {"--help", "-h"},
@@ -25,6 +26,12 @@ public class ClientMain {
                 help = true
         )
         public boolean help = false;
+    }
+
+    private static Arguments parsedArguments;
+
+    public static Arguments getArguments() {
+        return parsedArguments;
     }
 
     public static void main(String[] args) {
@@ -47,7 +54,9 @@ public class ClientMain {
             System.exit(0);
         }
 
+        parsedArguments = arguments;
+
         // normal execution
-        // TODO: start GUI
+        GuiMain.execute();
     }
 }
