@@ -17,5 +17,5 @@
             <Button mnemonicParsing="false" onAction="#onSettingsButtonClick" styleClass="big-button" text="Impostazioni" />
         </VBox>
     </VBox>
-      <Button layoutX="1106.0" layoutY="14.0" mnemonicParsing="false" onAction="#onExitButtonClick" prefWidth="201.0" styleClass="small-button" text="Esci" />
+      <Button mnemonicParsing="false" onAction="#onExitButtonClick" prefWidth="201.0" styleClass="small-button" text="Esci" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
 </AnchorPane>

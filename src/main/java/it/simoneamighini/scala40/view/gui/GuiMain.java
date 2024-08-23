@@ -13,8 +13,12 @@ public class GuiMain extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Scala 40");
-        SceneLoader.createFirstScene(stage, "fxml/menu.fxml");
         stage.setFullScreen(false);
+        stage.setMinWidth(1280);
+        stage.setMinHeight(720);
+
+        SceneLoader.createFirstScene(stage, "fxml/menu.fxml");
+
         stage.show();
     }
 }
