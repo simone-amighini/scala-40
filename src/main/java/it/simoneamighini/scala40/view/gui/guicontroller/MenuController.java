@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 public class MenuController implements SceneController {
     @FXML
     public void onPlayButtonClick() {
-        // TODO: missing scene
+        Platform.runLater(() -> SceneLoader.changeScene("fxml/startGame.fxml"));
     }
     
     @FXML

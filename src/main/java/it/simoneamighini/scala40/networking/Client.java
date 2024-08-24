@@ -30,20 +30,20 @@ public class Client extends Endpoint {
         setRunning(true);
         getLogger().info("Starting client");
 
-        this.serverIpAddress = address;
-        this.serverPort = port;
-
         Connection serverConnection;
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(address, port), CONNECT_TIMEOUT);
             serverConnection = new Connection(socket);
+            this.serverIpAddress = socket.getInetAddress().getHostAddress();
+            this.serverPort = port;
             getLogger().info("Connected to server " + serverConnection.getRemoteAddress());
         } catch (IOException exception) {
             getLogger().severe("Could not connect to server: " + exception.getMessage());
             setRunning(false);
             return false;
         }
+
 
         EventListener eventListener = new EventListener(this, serverConnection, getIncomingEventsQueue());
         addConnection(serverConnection, eventListener);

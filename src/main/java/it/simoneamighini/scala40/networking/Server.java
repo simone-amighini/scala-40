@@ -86,7 +86,11 @@ public class Server extends Endpoint {
 
     @Override
     synchronized void signalConnectionProblem(Connection connection, String message) {
-        getLogger().info("Unexpected disconnection from " + connection.getRemoteAddress() + ": " + message);
+        String messageSuffix = "";
+        if (message != null) {
+            messageSuffix = ": " + message;
+        }
+        getLogger().info("Unexpected disconnection from " + connection.getRemoteAddress() + messageSuffix);
         try {
             closeConnection(connection);
         } catch (IOException ignored) {}

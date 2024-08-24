@@ -9,6 +9,12 @@ AnchorPane {
 
 .normal-text {
     -fx-font-size: 18pt;
+    -fx-text-fill: rgb(0, 0, 0);
+}
+
+.error-text {
+    -fx-font-size: 18pt;
+    -fx-text-fill: rgb(189, 11, 11);
 }
 
 .main-title {
@@ -48,4 +54,5 @@ AnchorPane {
 .text-field {
     -fx-max-width: 320px;
     -fx-min-height: 50px;
+    -fx-font-size: 16pt;
 }
