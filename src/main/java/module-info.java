@@ -7,6 +7,8 @@ module it.simoneamighini.scala40 {
     requires jcommander;
 
     exports it.simoneamighini.scala40;
+    exports it.simoneamighini.scala40.networking;
+    exports it.simoneamighini.scala40.events;
     exports it.simoneamighini.scala40.view.gui;
     exports it.simoneamighini.scala40.view.gui.guicontroller;
 
