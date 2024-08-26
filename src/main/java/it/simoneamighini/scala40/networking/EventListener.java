@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 class EventListener implements Runnable {
     private final Endpoint endpoint;
     private final Connection listeningConnection;
-    private boolean stop;
+    private volatile boolean stop;
     private final IncomingEventsQueue incomingEventsQueue;
     private final Logger logger;
 

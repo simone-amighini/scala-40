@@ -3,15 +3,17 @@ package it.simoneamighini.scala40.networking;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class IncomingEventsQueue {
+class IncomingEventsQueue {
     private final Queue<Event> events;
+    private boolean pause;
 
     IncomingEventsQueue() {
         this.events = new LinkedList<>();
+        this.pause = false;
     }
 
-    public synchronized Event poll() {
-        while (events.isEmpty()) {
+    synchronized Event poll() {
+        while (events.isEmpty() || pause) {
             try {
                 wait();
             } catch (InterruptedException exception) {
@@ -27,7 +29,17 @@ public class IncomingEventsQueue {
         notifyAll();
     }
 
-    synchronized void clear() {
+    synchronized void stopReadAccess() {
+        pause = true;
+    }
+
+    synchronized void grantReadAccess() {
+        pause = false;
+        notifyAll();
+    }
+
+    synchronized void reset() {
         events.clear();
+        pause = false;
     }
 }

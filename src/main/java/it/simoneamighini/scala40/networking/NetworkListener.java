@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 class NetworkListener implements Runnable {
     private final Server server;
-    private boolean stop;
+    private volatile boolean stop;
     private final Logger logger;
 
     NetworkListener(Server server) {
