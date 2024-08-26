@@ -15,14 +15,14 @@ public class Client extends Endpoint {
         super(Client.class.getSimpleName());
     }
 
-    public synchronized static Client getInstance() {
+    public static Client getInstance() {
         if (instance == null) {
             instance = new Client();
         }
         return instance;
     }
 
-    public synchronized boolean start(String address, int port) throws IllegalStateException {
+    public boolean start(String address, int port) throws IllegalStateException {
         if (isRunning()) {
             throw new IllegalStateException("Client is already started");
         }
@@ -56,17 +56,27 @@ public class Client extends Endpoint {
         return getCorrespondentConnection(serverIpAddress + ":" + serverPort);
     }
 
-    public void send(Event event) {
+    public synchronized void send(Event event) {
         send(event, getServerConnection().getRemoteAddress());
     }
 
     @Override
     synchronized void signalConnectionProblem(Connection connection, String message) {
-        getLogger().info("Connection problem: " + message);
+        String messageSuffix = "";
+        if (message != null) {
+            messageSuffix = ": " + message;
+        }
+        getLogger().info("Disconnection of " + connection.getRemoteAddress() + messageSuffix);
+
+        networkStopNotify();
         stop();
     }
 
-    public synchronized void stop() {
+    public void stop() {
+        if (!isRunning()) {
+            return;
+        }
+
         try {
             closeConnection(getServerConnection());
             getLogger().info("Client stopped correctly");
@@ -74,9 +84,9 @@ public class Client extends Endpoint {
             getLogger().severe("Could not close connection with server");
         } finally {
             clearObservers();
-            getIncomingEventsQueue().clear();
+            getCurrentEventReaderThread().interrupt();
+            getIncomingEventsQueue().reset();
             setRunning(false);
-            networkStopNotify();
         }
     }
 }

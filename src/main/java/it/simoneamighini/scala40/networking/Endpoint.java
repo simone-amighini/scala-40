@@ -9,6 +9,7 @@ public abstract class Endpoint {
     private boolean running;
     private final Map<Connection, EventListener> connectionsMap;
     private final IncomingEventsQueue incomingEventsQueue;
+    private Thread eventReaderThread;
     private final List<NetworkObserver> observers;
 
     Endpoint(String classname) {
@@ -35,19 +36,38 @@ public abstract class Endpoint {
         return connectionsMap;
     }
 
-    public IncomingEventsQueue getIncomingEventsQueue() {
+    IncomingEventsQueue getIncomingEventsQueue() {
         return incomingEventsQueue;
     }
 
-    public synchronized void addObserver(NetworkObserver observer) {
+    public Thread getNewEventReaderThread() {
+        eventReaderThread = new Thread(
+                new EventReader(this), "EventReader (" + getClass().getName() + ")"
+        );
+        return eventReaderThread;
+    }
+
+    public Thread getCurrentEventReaderThread() {
+        return eventReaderThread;
+    }
+
+    public void stopEventReading() {
+        incomingEventsQueue.stopReadAccess();
+    }
+
+    public void resumeEventReading() {
+        incomingEventsQueue.grantReadAccess();
+    }
+
+    public void addObserver(NetworkObserver observer) {
         observers.add(observer);
     }
 
-    public synchronized void removeObserver(NetworkObserver observer) {
+    public void removeObserver(NetworkObserver observer) {
         observers.remove(observer);
     }
 
-    synchronized void clearObservers() {
+    void clearObservers() {
         observers.clear();
     }
 
@@ -58,17 +78,11 @@ public abstract class Endpoint {
         timer.schedule(echoSender, 0, EchoSender.ECHO_PERIOD);
     }
 
-    void networkStopNotify() {
-        for (NetworkObserver observer : observers) {
-            observer.networkStopUpdate();
-        }
-    }
-
     synchronized void addConnection(Connection connection, EventListener eventListener) {
         connectionsMap.put(connection, eventListener);
     }
 
-    Connection getCorrespondentConnection(String remoteAddress) {
+    synchronized Connection getCorrespondentConnection(String remoteAddress) {
         Connection searchedConnection = null;
         for (Connection connection : getConnectionsMap().keySet()) {
             if (remoteAddress.equals(connection.getRemoteAddress())) {
@@ -78,11 +92,12 @@ public abstract class Endpoint {
         return searchedConnection;
     }
 
-    public void send(Event event, String remoteAddress) {
+    public synchronized void send(Event event, String remoteAddress) {
         Connection connection = getCorrespondentConnection(remoteAddress);
         if (connection != null) {
             try {
                 connection.send(event);
+                logger.info("Sent " + event + " to " + connection.getRemoteAddress());
             } catch (IOException exception) {
                 signalConnectionProblem(connection, exception.getMessage());
             }
@@ -107,14 +122,20 @@ public abstract class Endpoint {
         }
     }
 
-    public synchronized void closeAllConnections() throws IOException {
+    synchronized void closeAllConnections() throws IOException {
         Map<Connection, EventListener> connectionsMapCopy = new HashMap<>(getConnectionsMap());
         for (Connection connection : connectionsMapCopy.keySet()) {
             closeConnection(connection);
         }
     }
 
-    void connectionClosingNotify(Connection connection) {
+    synchronized void networkStopNotify() {
+        for (NetworkObserver observer : observers) {
+            observer.networkStopUpdate();
+        }
+    }
+
+    synchronized void connectionClosingNotify(Connection connection) {
         for (NetworkObserver observer : observers) {
             observer.connectionClosingUpdate(connection.getRemoteAddress());
         }

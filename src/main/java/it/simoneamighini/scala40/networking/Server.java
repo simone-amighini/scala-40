@@ -22,11 +22,11 @@ public class Server extends Endpoint {
         welcomeSocket = new ServerSocket(port);
     }
 
-    public synchronized static Server getInstance() {
+    public static Server getInstance() {
         return Server.getInstance(DEFAULT_PORT);
     }
 
-    public synchronized static Server getInstance(int port) {
+    public static Server getInstance(int port) {
         if (instance == null) {
             try {
                 instance = new Server(port);
@@ -48,7 +48,7 @@ public class Server extends Endpoint {
         return welcomeSocket;
     }
 
-    public synchronized boolean start() throws IllegalStateException {
+    public boolean start() throws IllegalStateException {
         if (isRunning()) {
             throw new IllegalStateException("Server is already started");
         }
@@ -74,13 +74,16 @@ public class Server extends Endpoint {
         if (searchedConnection != null) {
             try {
                 closeConnection(searchedConnection);
-            } catch (IOException ignored) {}
+            } catch (IOException exception) {
+                signalGeneralServerProblem("cannot close connection with " + searchedConnection.getRemoteAddress());
+            }
         }
     }
 
     synchronized void signalGeneralServerProblem(String message) {
         getLogger().severe("Server general problem: " + message);
         getLogger().severe("Emergency server stop activated");
+        networkStopNotify();
         stop();
     }
 
@@ -90,14 +93,18 @@ public class Server extends Endpoint {
         if (message != null) {
             messageSuffix = ": " + message;
         }
-        getLogger().info("Unexpected disconnection from " + connection.getRemoteAddress() + messageSuffix);
+        getLogger().info("Disconnection of " + connection.getRemoteAddress() + messageSuffix);
         try {
             closeConnection(connection);
         } catch (IOException ignored) {}
         connectionClosingNotify(connection);
     }
 
-    public synchronized void stop() {
+    public void stop() {
+        if (!isRunning()) {
+            return;
+        }
+
         try {
             closeAllConnections();
         } catch (IOException ignored) {}
@@ -111,9 +118,9 @@ public class Server extends Endpoint {
             getLogger().severe("Could not close welcome socket correctly");
         } finally {
             clearObservers();
-            getIncomingEventsQueue().clear();
+            getCurrentEventReaderThread().interrupt();
+            getIncomingEventsQueue().reset();
             setRunning(false);
-            networkStopNotify();
         }
     }
 }
