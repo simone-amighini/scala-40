@@ -1,6 +1,7 @@
 package it.simoneamighini.scala40.events;
 
 import it.simoneamighini.scala40.networking.Event;
+import it.simoneamighini.scala40.servercontroller.connectionsmanagement.ConnectionsManager;
 
 public class FirstPlayerChoicesEvent extends Event {
     private final boolean resumeGame;
@@ -21,5 +22,7 @@ public class FirstPlayerChoicesEvent extends Event {
     }
 
     @Override
-    public void callHandler() {}
+    public void callHandler() {
+        ConnectionsManager.getInstance().handle(this);
+    }
 }

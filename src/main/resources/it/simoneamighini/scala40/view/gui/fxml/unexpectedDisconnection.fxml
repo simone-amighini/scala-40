@@ -6,8 +6,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="scene" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1">
-    <Button mnemonicParsing="false" prefWidth="201.0" styleClass="small-button" text="Esci" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.simoneamighini.scala40.view.gui.guicontroller.UnexpectedDisconnectionController">
+    <Button mnemonicParsing="false" onAction="#onExitButtonClick" prefWidth="201.0" styleClass="small-button" text="Esci" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="scene-title" text="Disconnessione imprevista" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="16.0" />
     <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
         <VBox alignment="CENTER" spacing="25.0">

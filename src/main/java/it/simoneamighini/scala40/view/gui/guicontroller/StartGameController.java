@@ -1,16 +1,24 @@
 package it.simoneamighini.scala40.view.gui.guicontroller;
 
 import it.simoneamighini.scala40.ClientMain;
+import it.simoneamighini.scala40.events.FirstPlayerResponseEvent;
+import it.simoneamighini.scala40.events.GameEnterEvent;
+import it.simoneamighini.scala40.events.GameEnterResponseEvent;
 import it.simoneamighini.scala40.networking.Client;
-import it.simoneamighini.scala40.networking.Event;
+import it.simoneamighini.scala40.networking.NetworkObserver;
+import it.simoneamighini.scala40.view.Data;
 import it.simoneamighini.scala40.view.gui.SceneLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-public class StartGameController implements SceneController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class StartGameController implements Initializable, NetworkObserver, SceneController {
     @FXML
     TextField username;
     @FXML
@@ -18,9 +26,23 @@ public class StartGameController implements SceneController {
     @FXML
     Label connectionResult;
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        Client.getInstance().addObserver(this);
+    }
+
+    @Override
+    public void networkStopUpdate() {
+        SceneLoader.changeScene("unexpectedDisconnection.fxml");
+    }
+
+    @Override
+    public void connectionClosingUpdate(String remoteAddress) {}
+
     @FXML
     public void onEnterButtonClick() {
-        if (username.getText().isEmpty() || username.getText().length() > 20 || username.getText().contains(" ")) {
+        String readUsername = username.getText();
+        if (readUsername.isEmpty() ||readUsername.length() > 20 || readUsername.contains(" ")) {
             Platform.runLater(
                     () -> {
                         connectionResult.getStyleClass().add("error-text");
@@ -28,6 +50,7 @@ public class StartGameController implements SceneController {
                         enterButton.setDisable(false);
                     }
             );
+            Client.getInstance().stop();
             return;
         }
 
@@ -52,26 +75,61 @@ public class StartGameController implements SceneController {
                         enterButton.setDisable(false);
                     }
             );
+            Client.getInstance().stop();
             return;
         }
 
         // if connection is ok
-        Platform.runLater(
-                () -> {
-                    connectionResult.getStyleClass().clear();
-                    connectionResult.getStyleClass().add("normal-text");
-                    connectionResult.setText("Connessione riuscita.");
-                }
-        );
+        Client.getInstance().getNewEventReaderThread().start();
+        Data.getInstance().setUsername(readUsername);
+        Client.getInstance().send(new GameEnterEvent(readUsername));
     }
 
     @FXML
     public void onBackButtonClick() {
         Client.getInstance().stop();
-
-        Platform.runLater(() -> SceneLoader.changeScene("fxml/menu.fxml"));
+        SceneLoader.changeScene("menu.fxml");
     }
 
     @Override
-    public void handle(Event event) {}
+    public void handle(FirstPlayerResponseEvent event) {
+        SceneLoader.changeScene("firstPlayerInteraction.fxml");
+    }
+
+    @Override
+    public void handle(GameEnterResponseEvent event) {
+        GameEnterResponseEvent.Response response = event.getResponse();
+
+        String messageToShow;
+        switch (response) {
+            case ACCEPTED -> {
+                SceneLoader.changeScene("waitingRoom.fxml");
+                return;
+            }
+            case REFUSED -> {
+                messageToShow = "Connessione rifiutata: il server non accetta nuovi giocatori.";
+            }
+            case USERNAME_REFUSED -> {
+                messageToShow = "Connessione rifiutata: username già in uso o invalido. Ritenta cambiando username.";
+            }
+            case NOT_A_SAVED_GAME_PLAYER -> {
+                messageToShow = "Connessione rifiutata: una partita di cui non si faceva parte è stata ripresa.";
+            }
+            case null -> {
+                criticalErrorManagement();
+                return;
+            }
+        }
+
+        // if there is a message, show it: then shutdown the networking
+        Platform.runLater(
+                () -> {
+                    connectionResult.getStyleClass().clear();
+                    connectionResult.getStyleClass().add("normal-text");
+                    connectionResult.setText(messageToShow);
+                    enterButton.setDisable(false);
+                }
+        );
+        Client.getInstance().stop();
+    }
 }
