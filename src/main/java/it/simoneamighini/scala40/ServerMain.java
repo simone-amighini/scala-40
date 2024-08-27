@@ -52,5 +52,7 @@ public class ServerMain {
         if (!(server.start())) {
             System.err.println("Server could not be started.");
         }
+
+        server.getNewEventReaderThread().start();
     }
 }

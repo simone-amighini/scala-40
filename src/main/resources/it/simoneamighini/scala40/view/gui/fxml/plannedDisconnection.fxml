@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.simoneamighini.scala40.view.gui.guicontroller.PlannedDisconnectionController">
+    <Button mnemonicParsing="false" onAction="#onExitButtonClick" prefWidth="201.0" styleClass="small-button" text="Esci" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="scene-title" text="Disconnessione forzata" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="16.0" />
+    <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
+        <VBox alignment="CENTER">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Il server ha imposto la disconnessione al client:" textAlignment="CENTER" />
+         <Label fx:id="disconnectionCauseLabel" styleClass="normal-text" text="Label" />
+            <VBox.margin>
+                <Insets top="-125.0" />
+            </VBox.margin>
+        </VBox>
+    </VBox>
+</AnchorPane>

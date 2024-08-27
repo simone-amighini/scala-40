@@ -1,13 +1,13 @@
 package it.simoneamighini.scala40.events;
 
 import it.simoneamighini.scala40.networking.Event;
+import it.simoneamighini.scala40.view.gui.SceneLoader;
 
 public class GameEnterResponseEvent extends Event {
     public enum Response {
         ACCEPTED,
         USERNAME_REFUSED,
         NOT_A_SAVED_GAME_PLAYER,
-        WAIT,
         REFUSED
     }
 
@@ -23,5 +23,7 @@ public class GameEnterResponseEvent extends Event {
     }
 
     @Override
-    public void callHandler() {}
+    public void callHandler() {
+        SceneLoader.getCurrentController().handle(this);
+    }
 }

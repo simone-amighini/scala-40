@@ -1,6 +1,8 @@
 package it.simoneamighini.scala40.view.gui;
 
+import it.simoneamighini.scala40.networking.Client;
 import it.simoneamighini.scala40.view.gui.guicontroller.SceneController;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,17 +35,24 @@ public class SceneLoader {
     }
 
     public static void changeScene(String sceneFXML) {
-        FXMLLoader fxmlLoader = new FXMLLoader(GuiMain.class.getResource(sceneFXML));
+        Client.getInstance().stopEventReading();
 
-        try {
-            Parent parent = fxmlLoader.load();
-            currentScene.setRoot(parent);
-            controller = fxmlLoader.getController();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+        Platform.runLater(
+                () -> {
+                    FXMLLoader fxmlLoader = new FXMLLoader(GuiMain.class.getResource("fxml/" + sceneFXML));
 
-        currentStage.setOnCloseRequest(event -> System.exit(0));
-        currentStage.show();
+                    try {
+                        Parent parent = fxmlLoader.load();
+                        currentScene.setRoot(parent);
+                        controller = fxmlLoader.getController();
+                    } catch (IOException exception) {
+                        throw new RuntimeException(exception);
+                    }
+
+                    currentStage.setOnCloseRequest(event -> System.exit(0));
+                    currentStage.show();
+                    Client.getInstance().resumeEventReading();
+                }
+        );
     }
 }

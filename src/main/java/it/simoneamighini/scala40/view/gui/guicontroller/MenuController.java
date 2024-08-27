@@ -1,6 +1,5 @@
 package it.simoneamighini.scala40.view.gui.guicontroller;
 
-import it.simoneamighini.scala40.networking.Event;
 import it.simoneamighini.scala40.view.gui.SceneLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,12 +7,12 @@ import javafx.fxml.FXML;
 public class MenuController implements SceneController {
     @FXML
     public void onPlayButtonClick() {
-        Platform.runLater(() -> SceneLoader.changeScene("fxml/startGame.fxml"));
+        SceneLoader.changeScene("startGame.fxml");
     }
     
     @FXML
     public void onSettingsButtonClick() {
-        Platform.runLater(() -> SceneLoader.changeScene("fxml/settings.fxml"));
+        SceneLoader.changeScene("settings.fxml");
     }
 
     @FXML
@@ -21,7 +20,4 @@ public class MenuController implements SceneController {
         Platform.exit();
         System.exit(0);
     }
-
-    @Override
-    public void handle(Event event) {}
 }

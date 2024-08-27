@@ -1,9 +1,7 @@
 package it.simoneamighini.scala40.view.gui.guicontroller;
 
 import it.simoneamighini.scala40.ClientMain;
-import it.simoneamighini.scala40.networking.Event;
 import it.simoneamighini.scala40.view.gui.SceneLoader;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -11,7 +9,7 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SettingsController implements SceneController, Initializable {
+public class SettingsController implements Initializable, SceneController {
     private static String originalServerAddress;
     private static String originalServerPort;
     @FXML
@@ -41,7 +39,7 @@ public class SettingsController implements SceneController, Initializable {
             ClientMain.getArguments().serverPort = originalServerPort;
         }
 
-        Platform.runLater(() -> SceneLoader.changeScene("fxml/menu.fxml"));
+        SceneLoader.changeScene("menu.fxml");
     }
 
     @FXML
@@ -53,7 +51,4 @@ public class SettingsController implements SceneController, Initializable {
     public void onServerPortChange() {
         ClientMain.getArguments().serverPort = serverPort.getText();
     }
-
-    @Override
-    public void handle(Event event) {}
 }
