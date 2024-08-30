@@ -1,10 +1,9 @@
 package it.simoneamighini.scala40.model;
 
-import it.simoneamighini.scala40.utils.Position;
-
+import java.io.Serializable;
 import java.util.List;
 
-class SingleCardAttacher {
+class SingleCardAttacher implements Serializable {
     private final Match match;
     private boolean locked;
     private Card tempCard;

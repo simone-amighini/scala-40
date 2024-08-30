@@ -1,8 +1,9 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-class AttachmentChecker {
+class AttachmentChecker implements Serializable {
     private final Match match;
 
     AttachmentChecker(Match match) {

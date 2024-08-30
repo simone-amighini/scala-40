@@ -1,11 +1,10 @@
 package it.simoneamighini.scala40.model;
 
-import it.simoneamighini.scala40.utils.Position;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements Serializable {
     private final String username;
     private int points;
     private Match match;
@@ -76,9 +75,9 @@ public class Player {
             throw new IllegalStateException("Player " + username + " has already picked a card");
         }
 
+        turnStartProcedure();
         Card card = match.getDeck().draw();
         hand.add(card);
-        turnStarted = true;
     }
 
     public void pickCardFromDiscardedCards() throws IllegalStateException {
@@ -91,10 +90,15 @@ public class Player {
                     "before opening");
         }
 
+        turnStartProcedure();
         Card card = match.getDiscardedCardsStack().pickTopCard();
         hand.add(card);
         setCardReuseObligation(card);
+    }
+
+    private void turnStartProcedure() {
         turnStarted = true;
+        match.requestGameSaving();
     }
 
     public boolean discardCard(String cardName) {
@@ -350,5 +354,7 @@ public class Player {
         }
     }
 
-    // TODO: add support for turn cancellation
+    public Game cancelTurn() {
+        return PersistenceUtility.loadGameFromDisk();
+    }
 }

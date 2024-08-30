@@ -1,8 +1,9 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-class GroupPlacer {
+class GroupPlacer implements Serializable {
     private final Match match;
 
     GroupPlacer(Match match) {

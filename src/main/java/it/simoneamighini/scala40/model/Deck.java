@@ -1,11 +1,12 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
-public class Deck {
+public class Deck implements Serializable {
     private final Stack<Card> cards;
 
     Deck() {

@@ -1,6 +1,5 @@
 package it.simoneamighini.scala40.model;
 
-import it.simoneamighini.scala40.utils.Position;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

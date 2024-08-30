@@ -1,6 +1,8 @@
 package it.simoneamighini.scala40.model;
 
-public abstract class Card {
+import java.io.Serializable;
+
+public abstract class Card implements Serializable {
     private final String name;
 
     Card(String name, BackColor backColor) {

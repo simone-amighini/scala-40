@@ -1,12 +1,13 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Game {
+public class Game implements Serializable {
     private final List<Player> players;
     private Match currentMatch;
     private int matchNumber;
@@ -67,18 +68,20 @@ public class Game {
         return matchNumber;
     }
 
-    private void startNewMatch() {
+    public void startNewMatch() {
         currentMatch = new Match(this, getActivePlayers());
         matchNumber++;
     }
 
     void postMatchProcedure() {
+        // TODO: notify match end to controller?
         // if only 1 player remains active, the game is finished
         if (getActivePlayers().size() == 1) {
-            // TODO: notify controller using observer pattern
-        } else {
-            startNewMatch();
-            // TODO: notify controller using observer pattern
+            // TODO: notify game end to controller?
         }
+    }
+
+    void saveOnDisk() {
+        PersistenceUtility.saveGameOnDisk(this);
     }
 }
