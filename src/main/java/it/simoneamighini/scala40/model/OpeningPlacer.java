@@ -1,9 +1,10 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-class OpeningPlacer {
+class OpeningPlacer implements Serializable {
     private final Match match;
 
     OpeningPlacer(Match match) {

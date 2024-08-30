@@ -1,4 +1,4 @@
-package it.simoneamighini.scala40.utils;
+package it.simoneamighini.scala40.model;
 
 public enum Position {
     START,

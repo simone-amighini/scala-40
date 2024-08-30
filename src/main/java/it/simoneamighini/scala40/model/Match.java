@@ -1,11 +1,14 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Match {
+public class Match implements Serializable {
     private final Game game;
     private final List<Player> players;
+    private boolean justStarted;
+    private boolean finished;
     private int turnNumber;
     private Player currentPlayer;
     private final Deck deck;
@@ -26,6 +29,8 @@ public class Match {
             player.linkToMatch(this);
         }
 
+        this.justStarted = true;
+        this.finished = false;
         this.turnNumber = 1;
         this.currentPlayer = null;
         this.deck = new Deck();
@@ -40,6 +45,14 @@ public class Match {
 
         // start the match
         distributeCards();
+    }
+
+    public boolean isJustStarted() {
+        return justStarted;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
     private void distributeCards() {
@@ -60,15 +73,17 @@ public class Match {
     }
 
     public void goToNextPlayer() {
+        justStarted = false;
         fillDeckIfEmpty();
+
         if (currentPlayerWins()) {
             addPointsToPlayers();
+            finished = true;
             game.postMatchProcedure();
             return;
         }
 
         int currentPlayerIndex = players.indexOf(currentPlayer);
-
         if (currentPlayerIndex != players.size() - 1) {
             currentPlayer = players.get(currentPlayerIndex + 1);
         } else {
@@ -163,5 +178,7 @@ public class Match {
         return jollyReplacer;
     }
 
-    // TODO: add support for turn cancellation
+    void requestGameSaving() {
+        game.saveOnDisk();
+    }
 }

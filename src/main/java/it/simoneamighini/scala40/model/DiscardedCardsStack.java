@@ -1,9 +1,10 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-public class DiscardedCardsStack {
+public class DiscardedCardsStack implements Serializable {
     private final Stack<Card> cards;
 
     DiscardedCardsStack() {

@@ -1,9 +1,10 @@
 package it.simoneamighini.scala40.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Group {
+public abstract class Group implements Serializable {
     private final List<Card> cards;
 
     Group(List<Card> cards) {
