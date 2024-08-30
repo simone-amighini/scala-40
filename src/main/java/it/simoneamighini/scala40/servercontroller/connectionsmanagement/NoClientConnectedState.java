@@ -3,6 +3,7 @@ package it.simoneamighini.scala40.servercontroller.connectionsmanagement;
 import it.simoneamighini.scala40.events.FirstPlayerChoicesEvent;
 import it.simoneamighini.scala40.events.FirstPlayerResponseEvent;
 import it.simoneamighini.scala40.events.GameEnterEvent;
+import it.simoneamighini.scala40.model.PersistenceUtility;
 
 public class NoClientConnectedState implements ConnectionsManagerState {
     private final ConnectionsManager connectionsManager;
@@ -18,14 +19,10 @@ public class NoClientConnectedState implements ConnectionsManagerState {
                 event.getUsername(),
                 event.getRemoteAddress()
         );
-
-        // TODO: check if a saved game exists and if the player belongs to it, then send the right response
-
         connectionsManager.sendEvent(
-                new FirstPlayerResponseEvent(false),
+                new FirstPlayerResponseEvent(PersistenceUtility.belongsToSavedGame(event.getUsername())),
                 event.getRemoteAddress()
         );
-
         connectionsManager.changeState(new FirstPlayerConnectedState(connectionsManager));
     }
 

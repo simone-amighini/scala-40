@@ -27,6 +27,10 @@ public class PlannedDisconnectionController implements Initializable, SceneContr
                 text = "disconnessione del primo giocatore nella sala d'attesa " +
                         "prima dell'arrivo delle sue scelte.";
             }
+            case NOT_A_SAVED_GAME_PLAYER -> {
+                text = "il primo giocatore ha deciso di ricominciare una partita di cui " +
+                        "non si faceva parte.";
+            }
             case REDUNDANT_PLAYER -> {
                 text = "il primo giocatore ha selezionato un numero di giocatori " +
                         "inferiore a quelli presenti in attesa.";

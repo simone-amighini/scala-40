@@ -1,6 +1,7 @@
 package it.simoneamighini.scala40.servercontroller.connectionsmanagement;
 
 import it.simoneamighini.scala40.events.*;
+import it.simoneamighini.scala40.model.PersistenceUtility;
 
 import java.util.List;
 
@@ -38,7 +39,6 @@ public class FirstPlayerConnectedState implements ConnectionsManagerState {
                 event.getUsername(),
                 remoteAddress
         );
-
         connectionsManager.sendEvent(
                 new GameEnterResponseEvent(GameEnterResponseEvent.Response.ACCEPTED),
                 remoteAddress
@@ -50,55 +50,86 @@ public class FirstPlayerConnectedState implements ConnectionsManagerState {
 
     @Override
     public void handle(FirstPlayerChoicesEvent event) {
-        // TODO: check if the player requires the resume of a saved game and so on...
-
-        // new game scenario
-        int requestedNumberOfPlayers = event.getNumberOfPlayers();
-
-        if (requestedNumberOfPlayers < 2 || requestedNumberOfPlayers > 6) {
-            // invalid number of players
-            connectionsManager.sendEventBroadcast(
-                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR)
-            );
-            connectionsManager.reset();
-            return;
-        }
-
-        int connectionsNumber = connectionsManager.getNumberOfConnections();
-        if (requestedNumberOfPlayers <= connectionsNumber) {
-            // there are enough players connected to start the game
-
-            // remove the unneeded players
-            List<String> usernamesInOrder = connectionsManager.getUsernamesInOrder();
-            for (int i = requestedNumberOfPlayers; i < connectionsNumber; i++) {
-                String currentUsername = usernamesInOrder.get(i);
+        if (event.requestsGameResume()) {
+            // resume game scenario
+            if (!PersistenceUtility.existsSavedGame()) {
                 connectionsManager.sendEvent(
-                        new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.REDUNDANT_PLAYER),
-                        connectionsManager.getAssociatedRemoteAddress(currentUsername)
+                        new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                        event.getRemoteAddress()
                 );
-                connectionsManager.removeUsernameFromUsernameConnectionMap(currentUsername);
+                return;
+            }
+
+            // remove players that do not belong to saved game
+            for (String username : connectionsManager.getUsernamesInOrder()) {
+                if (!PersistenceUtility.belongsToSavedGame(username)) {
+                    connectionsManager.sendEvent(
+                            new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.NOT_A_SAVED_GAME_PLAYER),
+                            connectionsManager.getAssociatedRemoteAddress(username)
+                    );
+                    connectionsManager.removeUsernameFromUsernameConnectionMap(username);
+                }
             }
 
             connectionsManager.sendEventBroadcast(
                     new WaitingRoomUpdateEvent(connectionsManager.getUsernamesInOrder())
             );
 
-            // change state
-            connectionsManager.changeState(new BlockedConnectionsState(connectionsManager));
-
-            // start the game
-            // TODO: send event and start the game
+            int requestedNumberOfPlayers = PersistenceUtility.getSavedGamePlayersNumber();
+            if (requestedNumberOfPlayers == connectionsManager.getNumberOfConnections()) {
+                // there are all the players that belongs to saved game
+                connectionsManager.changeState(new BlockedConnectionsState(connectionsManager));
+                connectionsManager.resumeGame();
+            } else {
+                // more players needed: change state and wait for them
+                connectionsManager.changeState(
+                        new WaitingPlayersForGameResumeState(connectionsManager, requestedNumberOfPlayers)
+                );
+            }
         } else {
-            // more players needed: change state and wait for them
+            // new game scenario
+            int requestedNumberOfPlayers = event.getNumberOfPlayers();
 
-            connectionsManager.sendEvent(
-                    new WaitingRoomUpdateEvent(connectionsManager.getUsernamesInOrder()),
-                    event.getRemoteAddress()
-            );
+            if (requestedNumberOfPlayers < 2 || requestedNumberOfPlayers > 6) {
+                // invalid number of players
+                connectionsManager.sendEventBroadcast(
+                        new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR)
+                );
+                connectionsManager.reset();
+                return;
+            }
 
-            connectionsManager.changeState(
-                    new WaitingPlayersForNewGameState(connectionsManager, requestedNumberOfPlayers)
-            );
+            int connectionsNumber = connectionsManager.getNumberOfConnections();
+            if (requestedNumberOfPlayers <= connectionsNumber) {
+                // there are enough players connected to start the game
+
+                // remove the unneeded players
+                List<String> usernamesInOrder = connectionsManager.getUsernamesInOrder();
+                for (int i = requestedNumberOfPlayers; i < connectionsNumber; i++) {
+                    String currentUsername = usernamesInOrder.get(i);
+                    connectionsManager.sendEvent(
+                            new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.REDUNDANT_PLAYER),
+                            connectionsManager.getAssociatedRemoteAddress(currentUsername)
+                    );
+                    connectionsManager.removeUsernameFromUsernameConnectionMap(currentUsername);
+                }
+
+                connectionsManager.sendEventBroadcast(
+                        new WaitingRoomUpdateEvent(connectionsManager.getUsernamesInOrder())
+                );
+                connectionsManager.changeState(new BlockedConnectionsState(connectionsManager));
+
+                connectionsManager.startNewGame();
+            } else {
+                // more players needed: change state and wait for them
+                connectionsManager.sendEvent(
+                        new WaitingRoomUpdateEvent(connectionsManager.getUsernamesInOrder()),
+                        event.getRemoteAddress()
+                );
+                connectionsManager.changeState(
+                        new WaitingPlayersForNewGameState(connectionsManager, requestedNumberOfPlayers)
+                );
+            }
         }
     }
 

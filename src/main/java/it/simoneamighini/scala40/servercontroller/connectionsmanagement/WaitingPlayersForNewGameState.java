@@ -31,15 +31,12 @@ public class WaitingPlayersForNewGameState implements ConnectionsManagerState {
             return;
         }
 
-        // add to connections
+        // check passed
         connectionsManager.addToUsernameConnectionMap(username, remoteAddress);
-
-        // send events
         connectionsManager.sendEvent(
                 new GameEnterResponseEvent(GameEnterResponseEvent.Response.ACCEPTED),
                 remoteAddress
         );
-
         connectionsManager.sendEventBroadcast(
                 new WaitingRoomUpdateEvent(connectionsManager.getUsernamesInOrder())
         );
@@ -48,7 +45,7 @@ public class WaitingPlayersForNewGameState implements ConnectionsManagerState {
         if (connectionsManager.getNumberOfConnections() == numberOfPlayersToWaitFor) {
             connectionsManager.changeState(new BlockedConnectionsState(connectionsManager));
             // there are all needed players
-            // TODO: send event and start a new game
+            connectionsManager.startNewGame();
         }
     }
 
@@ -61,7 +58,6 @@ public class WaitingPlayersForNewGameState implements ConnectionsManagerState {
     @Override
     public void handleClientDisconnection(String remoteAddress) {
         if (connectionsManager.isConnected(remoteAddress)) {
-            // remove the connection
             connectionsManager.removeRemoteAddressFromUsernameConnectionMap(remoteAddress);
 
             // check the remaining connections
