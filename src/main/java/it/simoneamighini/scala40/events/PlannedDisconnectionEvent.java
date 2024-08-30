@@ -8,7 +8,8 @@ public class PlannedDisconnectionEvent extends Event {
         CLIENT_ERROR,
         CLIENT_DISCONNECTION,
         FIRST_PLAYER_DISCONNECTION,
-        REDUNDANT_PLAYER
+        REDUNDANT_PLAYER,
+        NOT_A_SAVED_GAME_PLAYER
     }
 
     private final Cause cause;

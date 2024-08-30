@@ -1,5 +1,7 @@
 package it.simoneamighini.scala40.view.gui.guicontroller;
 
+import it.simoneamighini.scala40.events.GameResumeEvent;
+import it.simoneamighini.scala40.events.NewGameEvent;
 import it.simoneamighini.scala40.events.WaitingRoomUpdateEvent;
 import it.simoneamighini.scala40.networking.Client;
 import it.simoneamighini.scala40.view.gui.SceneLoader;
@@ -26,9 +28,19 @@ public class WaitingRoomController implements SceneController {
                     () -> {
                         Label label = new Label(username);
                         label.getStyleClass().add("normal-text");
-                        Platform.runLater(() -> displayNamesVBox.getChildren().add(label));
+                        displayNamesVBox.getChildren().add(label);
                     }
             );
         }
+    }
+
+    @Override
+    public void handle(NewGameEvent event) {
+        // TODO: change scene
+    }
+
+    @Override
+    public void handle(GameResumeEvent event) {
+        // TODO: change scene
     }
 }

@@ -28,4 +28,12 @@ public interface SceneController {
     default void handle(WaitingRoomUpdateEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(NewGameEvent event) {
+        criticalErrorManagement();
+    }
+
+    default void handle(GameResumeEvent event) {
+        criticalErrorManagement();
+    }
 }

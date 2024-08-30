@@ -60,14 +60,22 @@ public class FirstPlayerInteractionController implements Initializable, NetworkO
         boolean checkBoxSelected = resumeSavedGameCheckBox.isSelected();
         selectPlayersNumberLabel.setDisable(checkBoxSelected);
         playersNumberComboBox.setDisable(checkBoxSelected);
+        nextButton.setDisable(!checkBoxSelected);
     }
 
     @FXML
     public void onNextButtonClick() {
+        int playersNumber;
+        try {
+            playersNumber = playersNumberComboBox.getValue();
+        } catch (NullPointerException exception) {
+            playersNumber = 0;
+        }
+
         Client.getInstance().send(
                 new FirstPlayerChoicesEvent(
                         resumeSavedGameCheckBox.isSelected(),
-                        playersNumberComboBox.getValue()
+                        playersNumber
                 )
         );
         SceneLoader.changeScene("waitingRoom.fxml");

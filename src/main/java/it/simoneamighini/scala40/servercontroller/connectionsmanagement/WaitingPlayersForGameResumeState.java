@@ -2,7 +2,9 @@ package it.simoneamighini.scala40.servercontroller.connectionsmanagement;
 
 import it.simoneamighini.scala40.events.FirstPlayerChoicesEvent;
 import it.simoneamighini.scala40.events.GameEnterEvent;
+import it.simoneamighini.scala40.events.GameEnterResponseEvent;
 import it.simoneamighini.scala40.events.WaitingRoomUpdateEvent;
+import it.simoneamighini.scala40.model.PersistenceUtility;
 
 public class WaitingPlayersForGameResumeState implements ConnectionsManagerState {
     private final ConnectionsManager connectionsManager;
@@ -18,7 +20,42 @@ public class WaitingPlayersForGameResumeState implements ConnectionsManagerState
 
     @Override
     public void handle(GameEnterEvent event) {
-        // TODO
+        String username = event.getUsername();
+        String remoteAddress = event.getRemoteAddress();
+
+        // check on username
+        if (!connectionsManager.passesUsernameCheck(username)) {
+            connectionsManager.sendEvent(
+                    new GameEnterResponseEvent(GameEnterResponseEvent.Response.USERNAME_REFUSED),
+                    remoteAddress
+            );
+            return;
+        }
+
+        if (!PersistenceUtility.belongsToSavedGame(username)) {
+            connectionsManager.sendEvent(
+                    new GameEnterResponseEvent(GameEnterResponseEvent.Response.NOT_A_SAVED_GAME_PLAYER),
+                    remoteAddress
+            );
+            return;
+        }
+
+        // if all the checks are passed
+        connectionsManager.addToUsernameConnectionMap(username, remoteAddress);
+        connectionsManager.sendEvent(
+                new GameEnterResponseEvent(GameEnterResponseEvent.Response.ACCEPTED),
+                remoteAddress
+        );
+        connectionsManager.sendEventBroadcast(
+                new WaitingRoomUpdateEvent(connectionsManager.getUsernamesInOrder())
+        );
+
+        // check if now there all the needed players
+        if (connectionsManager.getNumberOfConnections() == numberOfPlayersToWaitFor) {
+            connectionsManager.changeState(new BlockedConnectionsState(connectionsManager));
+            // there are all needed players
+            connectionsManager.resumeGame();
+        }
     }
 
     @Override

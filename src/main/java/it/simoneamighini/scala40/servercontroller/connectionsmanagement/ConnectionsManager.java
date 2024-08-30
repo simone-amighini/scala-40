@@ -2,9 +2,15 @@ package it.simoneamighini.scala40.servercontroller.connectionsmanagement;
 
 import it.simoneamighini.scala40.events.FirstPlayerChoicesEvent;
 import it.simoneamighini.scala40.events.GameEnterEvent;
+import it.simoneamighini.scala40.events.GameResumeEvent;
+import it.simoneamighini.scala40.events.NewGameEvent;
+import it.simoneamighini.scala40.model.Game;
+import it.simoneamighini.scala40.model.PersistenceUtility;
+import it.simoneamighini.scala40.model.Player;
 import it.simoneamighini.scala40.networking.Event;
 import it.simoneamighini.scala40.networking.NetworkObserver;
 import it.simoneamighini.scala40.networking.Server;
+import it.simoneamighini.scala40.servercontroller.GameController;
 
 import java.util.*;
 
@@ -119,5 +125,22 @@ public class ConnectionsManager implements NetworkObserver {
         usernameConnectionMap.clear();
         usernamesInOrder.clear();
         changeState(new NoClientConnectedState(this));
+    }
+
+    void startNewGame() {
+        List<Player> players = new ArrayList<>();
+        for (String username : getUsernamesInOrder()) {
+            players.add(new Player(username));
+        }
+
+        Game game = new Game(players);
+        GameController.getInstance().setGame(game);
+        PersistenceUtility.saveGameOnDisk(game);
+        sendEventBroadcast(new NewGameEvent());
+    }
+
+    void resumeGame() {
+        GameController.getInstance().setGame(PersistenceUtility.loadGameFromDisk());
+        sendEventBroadcast(new GameResumeEvent());
     }
 }
