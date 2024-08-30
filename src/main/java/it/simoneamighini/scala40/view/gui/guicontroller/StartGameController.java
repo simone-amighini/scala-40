@@ -113,7 +113,7 @@ public class StartGameController implements Initializable, NetworkObserver, Scen
                 messageToShow = "Connessione rifiutata: username già in uso o invalido. Ritenta cambiando username.";
             }
             case NOT_A_SAVED_GAME_PLAYER -> {
-                messageToShow = "Connessione rifiutata: una partita di cui non si faceva parte è stata ripresa.";
+                messageToShow = "Connessione rifiutata: un torneo di cui non si faceva parte è stata ripresa.";
             }
             case null -> {
                 criticalErrorManagement();

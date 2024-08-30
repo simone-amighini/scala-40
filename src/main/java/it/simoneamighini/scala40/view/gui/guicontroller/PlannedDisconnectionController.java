@@ -28,7 +28,7 @@ public class PlannedDisconnectionController implements Initializable, SceneContr
                         "prima dell'arrivo delle sue scelte.";
             }
             case NOT_A_SAVED_GAME_PLAYER -> {
-                text = "il primo giocatore ha deciso di ricominciare una partita di cui " +
+                text = "il primo giocatore ha deciso di ricominciare un torneo di cui " +
                         "non si faceva parte.";
             }
             case REDUNDANT_PLAYER -> {
