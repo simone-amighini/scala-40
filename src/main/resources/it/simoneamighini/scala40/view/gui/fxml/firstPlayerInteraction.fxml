@@ -14,7 +14,7 @@
     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="scene-title" text="Scelte del primo giocatore" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="16.0" />
     <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
         <VBox alignment="CENTER" spacing="10.0">
-         <Label fx:id="selectPlayersNumberLabel" styleClass="normal-text" text="Seleziona il numero dei giocatori per una nuova partita:">
+         <Label fx:id="selectPlayersNumberLabel" styleClass="normal-text" text="Seleziona il numero dei giocatori per un nuovo torneo:">
             <VBox.margin>
                <Insets />
             </VBox.margin>
@@ -25,7 +25,7 @@
             </VBox.margin>
         </VBox>
         <VBox alignment="CENTER" spacing="10.0">
-         <CheckBox fx:id="resumeSavedGameCheckBox" mnemonicParsing="false" onAction="#onResumeSavedGameCheckBoxClick" styleClass="normal-text" text="Ricomincia l'ultima partita salvata" />
+         <CheckBox fx:id="resumeSavedGameCheckBox" mnemonicParsing="false" onAction="#onResumeSavedGameCheckBoxClick" styleClass="normal-text" text="Ricomincia l'ultimo torneo salvato" />
         </VBox>
       <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNextButtonClick" styleClass="big-button" text="Prosegui">
          <VBox.margin>
