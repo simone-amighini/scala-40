@@ -5,6 +5,8 @@ module it.simoneamighini.scala40 {
     requires org.controlsfx.controls;
     requires java.logging;
     requires jcommander;
+    requires batik.transcoder;
+    requires javafx.swing;
 
     exports it.simoneamighini.scala40;
     exports it.simoneamighini.scala40.networking;
