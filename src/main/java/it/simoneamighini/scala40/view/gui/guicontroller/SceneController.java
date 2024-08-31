@@ -36,4 +36,12 @@ public interface SceneController {
     default void handle(GameResumeEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(MatchInfoUpdateEvent event) {
+        criticalErrorManagement();
+    }
+
+    default void handle(TurnStartEvent event) {
+        criticalErrorManagement();
+    }
 }
