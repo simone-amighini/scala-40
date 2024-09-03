@@ -7,8 +7,21 @@ AnchorPane {
     -fx-background-color: rgb(90, 168, 135);
 }
 
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
 .normal-text {
     -fx-font-size: 18pt;
+    -fx-text-fill: rgb(0, 0, 0);
+}
+
+.small-text {
+    -fx-font-size: 14pt;
     -fx-text-fill: rgb(0, 0, 0);
 }
 
@@ -25,6 +38,7 @@ AnchorPane {
 
 .scene-title {
     -fx-font-size: 20pt;
+    -fx-text-fill: rgb(0, 0, 0);
 }
 
 .button {
@@ -49,6 +63,11 @@ AnchorPane {
     -fx-min-height: 30px;
     -fx-pref-width: 160px;
     -fx-font-size: 14pt;
+}
+
+.ultra-small-button {
+    .button;
+    -fx-font-size: 12pt;
 }
 
 .text-field {

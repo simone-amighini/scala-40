@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.simoneamighini.scala40.view.gui.guicontroller.MatchController">
+   <HBox alignment="CENTER" spacing="30.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="16.0">
+      <children>
+         <Label fx:id="startTypeLabel" styleClass="scene-title" text="Label" visible="false" />
+         <HBox alignment="CENTER" spacing="5.0">
+            <children>
+               <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Partita:" />
+               <Label fx:id="matchNumberLabel" alignment="CENTER" styleClass="normal-text" text="Label" visible="false" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER" spacing="5.0">
+            <children>
+               <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Turno:" />
+               <Label fx:id="turnNumberLabel" alignment="CENTER" styleClass="normal-text" text="Label" visible="false" />
+            </children>
+         </HBox>
+      </children>
+   </HBox>
+    <Button mnemonicParsing="false" onAction="#onExitButtonClick" prefWidth="201.0" styleClass="small-button" text="Esci" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+    <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" spacing="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
+      <HBox alignment="CENTER_LEFT" spacing="100.0">
+         <VBox.margin>
+            <Insets left="14.0" right="14.0" />
+         </VBox.margin>
+         <children>
+            <VBox spacing="40.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Tallone e pozzo" />
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <VBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <ImageView fx:id="deckImageView" fitHeight="180.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" />
+                              <Button fx:id="drawFromDeckButton" mnemonicParsing="false" onAction="#onDrawFromDeckButtonClick" styleClass="ultra-small-button" text="Pesca" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <ImageView fx:id="discardedCardsImageView" fitHeight="180.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" />
+                              <Button fx:id="pickFromDiscardedCardsButton" mnemonicParsing="false" onAction="#onPickFromDiscardedCardsButtonClick" styleClass="ultra-small-button" text="Prendi" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox spacing="50.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Giochi piazzati" />
+                        <HBox alignment="CENTER_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="attachGroupButton" mnemonicParsing="false" onAction="#onAttachGroupButtonClick" styleClass="ultra-small-button" text="Attacca gioco" />
+                              <Button fx:id="attachCardButton" mnemonicParsing="false" onAction="#onAttachCardButtonClick" styleClass="ultra-small-button" text="Attacca carta" />
+                              <Button fx:id="replaceJollyButton" mnemonicParsing="false" onAction="#onReplaceJollyButtonClick" styleClass="ultra-small-button" text="Sostituisci jolly" />
+                              <Button fx:id="cancelTurnButton" mnemonicParsing="false" onAction="#onCancelTurnButtonClick" styleClass="ultra-small-button" text="Annulla mosse del turno" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <content>
+                        <VBox fx:id="groupsVBox" fillWidth="false" />
+                     </content>
+                  </ScrollPane>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefWidth="1266.0" spacing="64.0">
+         <children>
+            <VBox spacing="10.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Info giocatori" />
+                  <VBox fx:id="playersInfoVBox" minWidth="300.0" spacing="5.0" styleClass="normal-label" />
+               </children>
+            </VBox>
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox spacing="50.0">
+                     <children>
+                        <HBox HBox.hgrow="ALWAYS">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="normal-text" text="Mano" />
+                           </children>
+                        </HBox>
+                        <ScrollPane hbarPolicy="NEVER" pannable="true" vbarPolicy="NEVER">
+                           <content>
+                              <HBox alignment="TOP_RIGHT" spacing="20.0">
+                                 <children>
+                                    <Button fx:id="openingButton" layoutX="263.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpeningButtonClick" styleClass="ultra-small-button" text="Apri" />
+                                    <Button fx:id="addGroupButton" mnemonicParsing="false" onAction="#onAddGroupButtonClick" styleClass="ultra-small-button" text="Aggiungi gioco per l'apertura" />
+                                    <Button fx:id="resetAddedGroupsButton" mnemonicParsing="false" onAction="#onResetAddedGroupsButtonClick" styleClass="ultra-small-button" text="Resetta giochi per l'apertura" />
+                                    <Button fx:id="viewAddedGroupsButton" mnemonicParsing="false" onAction="#onViewAddedGroupsButtonClick" styleClass="ultra-small-button" text="Visualizza giochi aggiunti" />
+                                    <Button fx:id="placeGroupButton" mnemonicParsing="false" onAction="#onPlaceGroupButtonClick" styleClass="ultra-small-button" text="Piazza gioco" />
+                                    <Button fx:id="discardCardButton" mnemonicParsing="false" onAction="#onDiscardCardButtonClick" styleClass="ultra-small-button" text="Scarta carta" />
+                                 </children>
+                              </HBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <VBox fx:id="handVBox" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets left="14.0" />
+         </padding>
+         <VBox.margin>
+            <Insets right="14.0" />
+         </VBox.margin>
+      </HBox>
+    </VBox>
+</AnchorPane>

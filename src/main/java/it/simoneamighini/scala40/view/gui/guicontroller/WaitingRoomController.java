@@ -36,11 +36,11 @@ public class WaitingRoomController implements SceneController {
 
     @Override
     public void handle(NewGameEvent event) {
-        // TODO: change scene
+        SceneLoader.changeScene("match.fxml");
     }
 
     @Override
     public void handle(GameResumeEvent event) {
-        // TODO: change scene
+        SceneLoader.changeScene("match.fxml");
     }
 }
