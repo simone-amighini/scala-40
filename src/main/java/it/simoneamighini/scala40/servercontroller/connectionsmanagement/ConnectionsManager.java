@@ -62,13 +62,14 @@ public class ConnectionsManager implements NetworkObserver {
         removeUsernameFromUsernameConnectionMap(getAssociatedUsername(remoteAddress));
     }
 
-    String getAssociatedRemoteAddress(String username) {
+    public String getAssociatedRemoteAddress(String username) {
         return usernameConnectionMap.get(username);
     }
 
-    String getAssociatedUsername(String remoteAddress) {
-        return usernameConnectionMap.keySet().stream()
-                .filter(username -> usernameConnectionMap.get(username).equals(remoteAddress))
+    public String getAssociatedUsername(String remoteAddress) {
+        return usernameConnectionMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(remoteAddress))
+                .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
     }
@@ -121,6 +122,7 @@ public class ConnectionsManager implements NetworkObserver {
     @Override
     public synchronized void networkStopUpdate() {
         reset();
+        ConnectionsManager.getInstance().reset();
     }
 
     public synchronized void reset() {
@@ -136,13 +138,17 @@ public class ConnectionsManager implements NetworkObserver {
         }
 
         Game game = new Game(players);
-        GameController.getInstance().setGame(game);
+
         PersistenceUtility.saveGameOnDisk(game);
         sendEventBroadcast(new NewGameEvent());
+
+        GameController.getInstance().setGame(game);
+        GameController.getInstance().start(false);
     }
 
     void resumeGame() {
         GameController.getInstance().setGame(PersistenceUtility.loadGameFromDisk());
         sendEventBroadcast(new GameResumeEvent());
+        GameController.getInstance().start(true);
     }
 }

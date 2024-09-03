@@ -25,7 +25,6 @@ public class Game implements Serializable {
         this.matchNumber = 0;
 
         shufflePlayers();
-        startNewMatch();
     }
 
     private void shufflePlayers() {

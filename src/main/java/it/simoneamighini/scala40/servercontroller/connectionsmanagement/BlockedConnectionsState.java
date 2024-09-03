@@ -39,13 +39,17 @@ public class BlockedConnectionsState implements ConnectionsManagerState {
     public void handleClientDisconnection(String remoteAddress) {
         if (connectionsManager.isConnected(remoteAddress)) {
             // disconnection of player
+            boolean isPlayerActive = GameController.getInstance()
+                    .isPlayerActive(connectionsManager.getAssociatedUsername(remoteAddress));
+
             connectionsManager.removeRemoteAddressFromUsernameConnectionMap(remoteAddress);
-            if (GameController.getInstance().isPlayerActive(connectionsManager.getAssociatedUsername(remoteAddress))) {
-                // if it is an active player
+
+            if (isPlayerActive) {
                 connectionsManager.sendEventBroadcast(
                         new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_DISCONNECTION)
                 );
                 connectionsManager.reset();
+                GameController.getInstance().reset();
             }
         }
         // else: it is a foreign client, ignore it
