@@ -19,4 +19,12 @@ public class GameController {
     public void setGame(Game game) {
         this.game = game;
     }
+
+    public boolean isPlayerActive(String username) {
+        try {
+            return game.getPlayers().contains(username);
+        } catch (NullPointerException exception) {
+            return false;
+        }
+    }
 }

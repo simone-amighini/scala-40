@@ -58,17 +58,19 @@ public class ConnectionsManager implements NetworkObserver {
         usernamesInOrder.remove(username);
     }
 
-    void removeRemoteAddressFromUsernameConnectionMap(String remoteAddress) throws NoSuchElementException {
-        String relatedUsername = usernameConnectionMap.keySet().stream()
-                .filter(username -> usernameConnectionMap.get(username).equals(remoteAddress))
-                .findFirst()
-                .get();
-
-        removeUsernameFromUsernameConnectionMap(relatedUsername);
+    void removeRemoteAddressFromUsernameConnectionMap(String remoteAddress) {
+        removeUsernameFromUsernameConnectionMap(getAssociatedUsername(remoteAddress));
     }
 
     String getAssociatedRemoteAddress(String username) {
         return usernameConnectionMap.get(username);
+    }
+
+    String getAssociatedUsername(String remoteAddress) {
+        return usernameConnectionMap.keySet().stream()
+                .filter(username -> usernameConnectionMap.get(username).equals(remoteAddress))
+                .findFirst()
+                .orElse(null);
     }
 
     boolean isFirstPlayerConnection(String remoteAddress) {
