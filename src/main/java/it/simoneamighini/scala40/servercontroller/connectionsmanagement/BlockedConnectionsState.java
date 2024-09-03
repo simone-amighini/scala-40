@@ -4,6 +4,7 @@ import it.simoneamighini.scala40.events.FirstPlayerChoicesEvent;
 import it.simoneamighini.scala40.events.GameEnterEvent;
 import it.simoneamighini.scala40.events.GameEnterResponseEvent;
 import it.simoneamighini.scala40.events.PlannedDisconnectionEvent;
+import it.simoneamighini.scala40.servercontroller.GameController;
 
 public class BlockedConnectionsState implements ConnectionsManagerState {
     private final ConnectionsManager connectionsManager;
@@ -37,12 +38,15 @@ public class BlockedConnectionsState implements ConnectionsManagerState {
     @Override
     public void handleClientDisconnection(String remoteAddress) {
         if (connectionsManager.isConnected(remoteAddress)) {
-            // disconnection of an active player
+            // disconnection of player
             connectionsManager.removeRemoteAddressFromUsernameConnectionMap(remoteAddress);
-            connectionsManager.sendEventBroadcast(
-                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_DISCONNECTION)
-            );
-            connectionsManager.reset();
+            if (GameController.getInstance().isPlayerActive(connectionsManager.getAssociatedUsername(remoteAddress))) {
+                // if it is an active player
+                connectionsManager.sendEventBroadcast(
+                        new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_DISCONNECTION)
+                );
+                connectionsManager.reset();
+            }
         }
         // else: it is a foreign client, ignore it
     }
