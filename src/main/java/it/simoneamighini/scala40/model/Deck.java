@@ -46,6 +46,10 @@ public class Deck implements Serializable {
         return cards.isEmpty();
     }
 
+    public Card viewTopCard() {
+        return cards.peek();
+    }
+
     void fillWith(List<Card> cards) throws IllegalStateException {
         if (isEmpty()) {
             for (Card card : cards) {

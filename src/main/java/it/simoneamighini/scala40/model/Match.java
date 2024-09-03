@@ -32,7 +32,7 @@ public class Match implements Serializable {
         this.justStarted = true;
         this.finished = false;
         this.turnNumber = 1;
-        this.currentPlayer = null;
+        this.currentPlayer = players.getFirst();
         this.deck = new Deck();
         this.discardedCardsStack = new DiscardedCardsStack();
         this.groups = new ArrayList<>();
