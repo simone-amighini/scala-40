@@ -150,65 +150,73 @@ public class MatchController implements SceneController, Initializable {
     }
 
     private void disableAllMatchRelatedButtons() {
-        drawFromDeckButton.setDisable(true);
-        pickFromDiscardedCardsButton.setDisable(true);
-        openingButton.setDisable(true);
-        addGroupButton.setDisable(true);
-        resetAddedGroupsButton.setDisable(true);
-        viewAddedGroupsButton.setDisable(true);
-        placeGroupButton.setDisable(true);
-        attachGroupButton.setDisable(true);
-        attachCardButton.setDisable(true);
-        replaceJollyButton.setDisable(true);
-        discardCardButton.setDisable(true);
-        cancelTurnButton.setDisable(true);
+        Platform.runLater(
+                () -> {
+                    drawFromDeckButton.setDisable(true);
+                    pickFromDiscardedCardsButton.setDisable(true);
+                    openingButton.setDisable(true);
+                    addGroupButton.setDisable(true);
+                    resetAddedGroupsButton.setDisable(true);
+                    viewAddedGroupsButton.setDisable(true);
+                    placeGroupButton.setDisable(true);
+                    attachGroupButton.setDisable(true);
+                    attachCardButton.setDisable(true);
+                    replaceJollyButton.setDisable(true);
+                    discardCardButton.setDisable(true);
+                    cancelTurnButton.setDisable(true);
+                }
+        );
     }
 
     private void enableValidMatchRelatedButtons() {
-        openingButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        Data.getInstance().hasPlayerOpened() ||
-                        groupsAddedForOpening.isEmpty()
-        );
-        addGroupButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        Data.getInstance().hasPlayerOpened() ||
-                        selectedCardIDsInHand.size() <= 2
-        );
-        resetAddedGroupsButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        Data.getInstance().hasPlayerOpened() ||
-                        groupsAddedForOpening.isEmpty()
-        );
-        viewAddedGroupsButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        Data.getInstance().hasPlayerOpened() ||
-                        groupsAddedForOpening.isEmpty()
-        );
-        discardCardButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        selectedCardIDsInHand.size() != 1
-        );
-        attachGroupButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        !Data.getInstance().hasPlayerOpened() ||
-                        selectedGroupsWildCards.size() != 1 ||
-                        selectedCardIDsInHand.size() <= 2 ||
-                        getNumberOfSelectedCardInGroups() != 0
-        );
-        attachCardButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        !Data.getInstance().hasPlayerOpened() ||
-                        selectedGroupsWildCards.size() != 1 ||
-                        selectedCardIDsInHand.size() != 1 ||
-                        getNumberOfSelectedCardInGroups() != 0
-        );
-        replaceJollyButton.setDisable(
-                !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                        !Data.getInstance().hasPlayerOpened() ||
-                        getNumberOfSelectedCardInGroups() != 1 ||
-                        selectedCardIDsInHand.size() != 1 ||
-                        !selectedGroupsWildCards.isEmpty()
+        Platform.runLater(
+                () -> {
+                    openingButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    Data.getInstance().hasPlayerOpened() ||
+                                    groupsAddedForOpening.isEmpty()
+                    );
+                    addGroupButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    Data.getInstance().hasPlayerOpened() ||
+                                    selectedCardIDsInHand.size() <= 2
+                    );
+                    resetAddedGroupsButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    Data.getInstance().hasPlayerOpened() ||
+                                    groupsAddedForOpening.isEmpty()
+                    );
+                    viewAddedGroupsButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    Data.getInstance().hasPlayerOpened() ||
+                                    groupsAddedForOpening.isEmpty()
+                    );
+                    discardCardButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    selectedCardIDsInHand.size() != 1
+                    );
+                    attachGroupButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    !Data.getInstance().hasPlayerOpened() ||
+                                    selectedGroupsWildCards.size() != 1 ||
+                                    selectedCardIDsInHand.size() <= 2 ||
+                                    getNumberOfSelectedCardInGroups() != 0
+                    );
+                    attachCardButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    !Data.getInstance().hasPlayerOpened() ||
+                                    selectedGroupsWildCards.size() != 1 ||
+                                    selectedCardIDsInHand.size() != 1 ||
+                                    getNumberOfSelectedCardInGroups() != 0
+                    );
+                    replaceJollyButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    !Data.getInstance().hasPlayerOpened() ||
+                                    getNumberOfSelectedCardInGroups() != 1 ||
+                                    selectedCardIDsInHand.size() != 1 ||
+                                    !selectedGroupsWildCards.isEmpty()
+                    );
+                }
         );
     }
 
@@ -219,22 +227,26 @@ public class MatchController implements SceneController, Initializable {
     }
 
     private void initializeInfo() {
-        deckImageView.setImage(null);
-        discardedCardsImageView.setImage(null);
+        Platform.runLater(
+                () -> {
+                    deckImageView.setImage(null);
+                    discardedCardsImageView.setImage(null);
 
-        groupsVBox.getChildren().clear();
-        groupsCardIDImageViewMaps.clear();
-        selectedCardsInGroups.clear();
+                    groupsVBox.getChildren().clear();
+                    groupsCardIDImageViewMaps.clear();
+                    selectedCardsInGroups.clear();
 
-        handVBox.getChildren().clear();
-        handCardIDImageViewMap.clear();
-        selectedCardIDsInHand.clear();
+                    handVBox.getChildren().clear();
+                    handCardIDImageViewMap.clear();
+                    selectedCardIDsInHand.clear();
 
-        groupsAddedForOpening.clear();
+                    groupsAddedForOpening.clear();
 
-        selectedGroupsWildCards.clear();
+                    selectedGroupsWildCards.clear();
 
-        playersInfoVBox.getChildren().clear();
+                    playersInfoVBox.getChildren().clear();
+                }
+        );
     }
 
     private void fillStartTypeLabel() {
@@ -357,9 +369,13 @@ public class MatchController implements SceneController, Initializable {
     }
 
     private void addCardToGroup(int groupNumber, String cardID, ImageView imageView) {
-        internalGroupHBoxes.get(groupNumber).getChildren().add(imageView);
-        imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
-        groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
+        Platform.runLater(
+                () -> {
+                    internalGroupHBoxes.get(groupNumber).getChildren().add(imageView);
+                    imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
+                    groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
+                }
+        );
     }
 
     private Integer getGroupNumberOfImageView(ImageView imageView) {
@@ -384,60 +400,81 @@ public class MatchController implements SceneController, Initializable {
         Integer groupNumber = getGroupNumberOfImageView(imageView);
         String relatedCardID = getCardIDFromImageView(groupsCardIDImageViewMaps.get(groupNumber), imageView);
         boolean cardAlreadySelected = selectedCardsInGroups.get(groupNumber).contains(relatedCardID);
-        if (cardAlreadySelected) {
-            // remove it from selected cards and make it available
-            selectedCardsInGroups.get(groupNumber).remove(
-                    getCardIDFromImageView(groupsCardIDImageViewMaps.get(groupNumber), imageView)
-            );
-            imageView.setEffect(null);
-        } else {
-            // add it to selected cards and make it unavailable
-            selectedCardsInGroups.get(groupNumber).add(
-                    groupsCardIDImageViewMaps.get(groupNumber).entrySet().stream()
-                            .filter(entry -> Objects.equals(entry.getValue(), imageView))
-                            .map(Map.Entry::getKey)
-                            .toList().getFirst()
-            );
-            applyShadowEffect(imageView);
-        }
 
-        enableValidMatchRelatedButtons();
+        Platform.runLater(
+                () -> {
+                    if (cardAlreadySelected) {
+                        // remove it from selected cards and make it available
+                        selectedCardsInGroups.get(groupNumber).remove(
+                                getCardIDFromImageView(groupsCardIDImageViewMaps.get(groupNumber), imageView)
+                        );
+                        imageView.setEffect(null);
+                    } else {
+                        // add it to selected cards and make it unavailable
+                        selectedCardsInGroups.get(groupNumber).add(
+                                groupsCardIDImageViewMaps.get(groupNumber).entrySet().stream()
+                                        .filter(entry -> Objects.equals(entry.getValue(), imageView))
+                                        .map(Map.Entry::getKey)
+                                        .toList().getFirst()
+                        );
+                        applyShadowEffect(imageView);
+                    }
+
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     public void onWildCardMouseClick(WildCard wildCard) {
-        if (selectedGroupsWildCards.contains(wildCard)) {
-            // remove it from selected cards and make it available
-            selectedGroupsWildCards.remove(wildCard);
-            wildCard.setFill(Color.TRANSPARENT);
-        } else {
-            // add it to selected cards and make it unavailable
-            selectedGroupsWildCards.add(wildCard);
-            wildCard.setFill(Color.BEIGE);
-        }
+        Platform.runLater(
+                () -> {
+                    if (selectedGroupsWildCards.contains(wildCard)) {
+                        // remove it from selected cards and make it available
+                        selectedGroupsWildCards.remove(wildCard);
+                        wildCard.setFill(Color.TRANSPARENT);
+                    } else {
+                        // add it to selected cards and make it unavailable
+                        selectedGroupsWildCards.add(wildCard);
+                        wildCard.setFill(Color.BEIGE);
+                    }
 
-        enableValidMatchRelatedButtons();
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     public void onWildCardMouseEnter(WildCard wildCard) {
-        wildCard.setFill(Color.BEIGE);
+        Platform.runLater(() -> wildCard.setFill(Color.BEIGE));
     }
 
     public void onWildCardMouseExit(WildCard wildCard) {
-        if (!selectedGroupsWildCards.contains(wildCard)) {
-            wildCard.setFill(Color.TRANSPARENT);
-        }
+        Platform.runLater(
+                () -> {
+                    if (!selectedGroupsWildCards.contains(wildCard)) {
+                        wildCard.setFill(Color.TRANSPARENT);
+                    }
+                }
+        );
     }
 
     private void applyShadowEffect(ImageView imageView) {
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(-0.5);
-        imageView.setEffect(colorAdjust);
+        Platform.runLater(
+                () -> {
+                    ColorAdjust colorAdjust = new ColorAdjust();
+                    colorAdjust.setBrightness(-0.5);
+                    imageView.setEffect(colorAdjust);
+                }
+        );
     }
 
     private void applyDarkEffect(ImageView imageView) {
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(-50);
-        imageView.setEffect(colorAdjust);
+        Platform.runLater(
+                () -> {
+                    ColorAdjust colorAdjust = new ColorAdjust();
+                    colorAdjust.setBrightness(-50);
+                    imageView.setEffect(colorAdjust);
+                }
+        );
     }
 
     private void showHand() {
@@ -462,31 +499,40 @@ public class MatchController implements SceneController, Initializable {
     }
 
     private void addCardToHand(String cardID, ImageView imageView) {
-        internalHandHBox.getChildren().add(imageView);
-        imageView.setOnMouseClicked( event -> onHandCardImageViewClick(imageView));
-        handCardIDImageViewMap.put(cardID, imageView);
+        Platform.runLater(
+                () -> {
+                    internalHandHBox.getChildren().add(imageView);
+                    imageView.setOnMouseClicked( event -> onHandCardImageViewClick(imageView));
+                    handCardIDImageViewMap.put(cardID, imageView);
+                }
+        );
     }
 
     public void onHandCardImageViewClick(ImageView imageView) {
         boolean cardAlreadySelected = selectedCardIDsInHand.contains(
                 getCardIDFromImageView(handCardIDImageViewMap, imageView)
         );
-        if (cardAlreadySelected) {
-            // remove it from selected cards and make it available
-            selectedCardIDsInHand.remove(getCardIDFromImageView(handCardIDImageViewMap, imageView));
-            imageView.setEffect(null);
-        } else {
-            // add it to selected cards and make it unavailable
-            selectedCardIDsInHand.add(
-                    handCardIDImageViewMap.entrySet().stream()
-                            .filter(entry -> Objects.equals(entry.getValue(), imageView))
-                            .map(Map.Entry::getKey)
-                            .toList().getFirst()
-            );
-            applyShadowEffect(imageView);
-        }
 
-        enableValidMatchRelatedButtons();
+        Platform.runLater(
+                () -> {
+                    if (cardAlreadySelected) {
+                        // remove it from selected cards and make it available
+                        selectedCardIDsInHand.remove(getCardIDFromImageView(handCardIDImageViewMap, imageView));
+                        imageView.setEffect(null);
+                    } else {
+                        // add it to selected cards and make it unavailable
+                        selectedCardIDsInHand.add(
+                                handCardIDImageViewMap.entrySet().stream()
+                                        .filter(entry -> Objects.equals(entry.getValue(), imageView))
+                                        .map(Map.Entry::getKey)
+                                        .toList().getFirst()
+                        );
+                        applyShadowEffect(imageView);
+                    }
+
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     private void showPlayersInfo() {
@@ -562,17 +608,21 @@ public class MatchController implements SceneController, Initializable {
     }
 
     private void pickCardManagement(String relatedCardID, ImageView relatedImageView) {
-        disableAllMatchRelatedButtons();
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
 
-        Data.getInstance().setPlayerAlreadyPickedACard(true);
-        drawFromDeckButton.setDisable(true);
-        pickFromDiscardedCardsButton.setDisable(true);
-        cancelTurnButton.setDisable(false);
-        relatedImageView.setDisable(true);
-        relatedImageView.setVisible(false);
-        addCardToHand(relatedCardID, generateImageView(relatedCardID));
+                    Data.getInstance().setPlayerAlreadyPickedACard(true);
+                    drawFromDeckButton.setDisable(true);
+                    pickFromDiscardedCardsButton.setDisable(true);
+                    cancelTurnButton.setDisable(false);
+                    relatedImageView.setDisable(true);
+                    relatedImageView.setVisible(false);
+                    addCardToHand(relatedCardID, generateImageView(relatedCardID));
 
-        enableValidMatchRelatedButtons();
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     private void showNotification(String message) {
@@ -596,74 +646,86 @@ public class MatchController implements SceneController, Initializable {
 
     @FXML
     public void onAddGroupButtonClick() {
-        disableAllMatchRelatedButtons();
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
 
-        List<String> addedGroup = new ArrayList<>();
-        addedGroup.addAll(selectedCardIDsInHand);
-        groupsAddedForOpening.add(addedGroup);
+                    List<String> addedGroup = new ArrayList<>();
+                    addedGroup.addAll(selectedCardIDsInHand);
+                    groupsAddedForOpening.add(addedGroup);
 
-        List<String> selectedCardIDsInHandCopy = new ArrayList<>(selectedCardIDsInHand);
-        for (String cardID : selectedCardIDsInHandCopy) {
-            ImageView relatedImageView = handCardIDImageViewMap.get(cardID);
-            onHandCardImageViewClick(relatedImageView); // cancel selection
-            applyDarkEffect(relatedImageView);
-            relatedImageView.setDisable(true);
-        }
+                    List<String> selectedCardIDsInHandCopy = new ArrayList<>(selectedCardIDsInHand);
+                    for (String cardID : selectedCardIDsInHandCopy) {
+                        ImageView relatedImageView = handCardIDImageViewMap.get(cardID);
+                        onHandCardImageViewClick(relatedImageView); // cancel selection
+                        applyDarkEffect(relatedImageView);
+                        relatedImageView.setDisable(true);
+                    }
 
-        enableValidMatchRelatedButtons();
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     @FXML
     public void onResetAddedGroupsButtonClick() {
-        disableAllMatchRelatedButtons();
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
 
-        for (List<String> addedGroup : groupsAddedForOpening) {
-            for (String cardID : addedGroup) {
-                ImageView relatedImageView = handCardIDImageViewMap.get(cardID);
-                relatedImageView.setEffect(null);
-                relatedImageView.setDisable(false);
-            }
-        }
-        groupsAddedForOpening.clear();
+                    for (List<String> addedGroup : groupsAddedForOpening) {
+                        for (String cardID : addedGroup) {
+                            ImageView relatedImageView = handCardIDImageViewMap.get(cardID);
+                            relatedImageView.setEffect(null);
+                            relatedImageView.setDisable(false);
+                        }
+                    }
+                    groupsAddedForOpening.clear();
 
-        enableValidMatchRelatedButtons();
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     @FXML
     public void onViewAddedGroupsButtonClick() {
-        VBox containerVBox = new VBox();
-        containerVBox.setFillWidth(true);
-        containerVBox.setSpacing(10);
-        containerVBox.setAlignment(Pos.TOP_LEFT);
+        Platform.runLater(
+                () -> {
+                    VBox containerVBox = new VBox();
+                    containerVBox.setFillWidth(true);
+                    containerVBox.setSpacing(10);
+                    containerVBox.setAlignment(Pos.TOP_LEFT);
 
-        Text title = new Text("Giochi aggiunti per l'apertura");
-        title.getStyleClass().add("scene-title");
-        containerVBox.getChildren().add(title);
+                    Text title = new Text("Giochi aggiunti per l'apertura");
+                    title.getStyleClass().add("scene-title");
+                    containerVBox.getChildren().add(title);
 
-        ScrollPane containerScrollPane = new ScrollPane();
-        containerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        containerScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                    ScrollPane containerScrollPane = new ScrollPane();
+                    containerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                    containerScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        VBox groupsVBox = new VBox();
-        groupsVBox.setAlignment(Pos.TOP_LEFT);
-        containerScrollPane.setContent(groupsVBox);
-        containerVBox.getChildren().add(containerScrollPane);
+                    VBox groupsVBox = new VBox();
+                    groupsVBox.setAlignment(Pos.TOP_LEFT);
+                    containerScrollPane.setContent(groupsVBox);
+                    containerVBox.getChildren().add(containerScrollPane);
 
-        for (List<String> group : groupsAddedForOpening) {
-            ScrollPane groupScrollPane = generateCardsScrollPane();
-            HBox innerGroupHBox = (HBox) groupScrollPane.getContent();
-            groupScrollPane.setContent(innerGroupHBox);
-            for (String cardID : group) {
-                innerGroupHBox.getChildren().add(generateImageView(cardID));
-            }
-            containerVBox.getChildren().add(groupScrollPane);
-        }
+                    for (List<String> group : groupsAddedForOpening) {
+                        ScrollPane groupScrollPane = generateCardsScrollPane();
+                        HBox innerGroupHBox = (HBox) groupScrollPane.getContent();
+                        groupScrollPane.setContent(innerGroupHBox);
+                        for (String cardID : group) {
+                            innerGroupHBox.getChildren().add(generateImageView(cardID));
+                        }
+                        containerVBox.getChildren().add(groupScrollPane);
+                    }
 
-        PopupCreator.show(
-                "Anteprima apertura",
-                1280,
-                720,
-                containerVBox
+                    PopupCreator.show(
+                            "Anteprima apertura",
+                            1280,
+                            720,
+                            containerVBox
+                    );
+                }
         );
     }
 
