@@ -44,4 +44,12 @@ public interface SceneController {
     default void handle(TurnStartEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(TurnEndEvent event) {
+        criticalErrorManagement();
+    }
+
+    default void handle(CancelTurnConfirmationEvent event) {
+        criticalErrorManagement();
+    }
 }
