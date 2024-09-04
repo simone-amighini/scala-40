@@ -186,6 +186,30 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
+    public void handle(AttachCardConfirmationEvent event) {
+        Platform.runLater(
+                () -> {
+                    attachCardToGroup(
+                            selectedGroupsWildCards.getFirst().getGroupNumber(),
+                            selectedGroupsWildCards.getFirst().getPosition(),
+                            selectedCardIDsInHand.getFirst()
+                    );
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
+    public void handle(AttachCardDenialEvent event) {
+        Platform.runLater(
+                () -> {
+                    showNotification("Non è possibile attaccare la carta selezionata nella posizione scelta.");
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
     public void handle(TurnEndEvent event) {
         Data.getInstance().setPlayerAlreadyPickedACard(false);
         deckImageView.setVisible(true);
@@ -193,7 +217,17 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
-    public void handle(CancelTurnConfirmationEvent event) {}
+    public void handle(CancelTurnConfirmationEvent event) {
+        Platform.runLater(
+                () -> {
+                    Data.getInstance().setPlayerAlreadyPickedACard(false);
+                    deckImageView.setVisible(true);
+                    discardedCardsImageView.setVisible(true);
+                    drawFromDeckButton.setDisable(false);
+                    pickFromDiscardedCardsButton.setDisable(!Data.getInstance().hasPlayerOpened());
+                }
+        );
+    }
 
     private void disableAllMatchRelatedButtons() {
         Platform.runLater(
@@ -426,6 +460,21 @@ public class MatchController implements SceneController, Initializable {
         internalGroupHBoxes.get(groupNumber).getChildren().add(imageView);
         imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
         groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
+    }
+
+    private void attachCardToGroup(int groupNumber, WildCard.Position position, String cardID) {
+        ImageView imageView = generateImageView(cardID);
+        int placementIndex = switch (position) {
+            case START -> 1;
+            case END -> internalGroupHBoxes.get(groupNumber).getChildren().size() - 1;
+        };
+        internalGroupHBoxes.get(groupNumber).getChildren().add(placementIndex, imageView);
+        imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
+        groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
+
+        selectedCardIDsInHand.removeFirst();
+        onWildCardMouseClick(selectedGroupsWildCards.getFirst());
+        removeCardFromHand(cardID);
     }
 
     private Integer getGroupNumberOfImageView(ImageView imageView) {
@@ -814,7 +863,21 @@ public class MatchController implements SceneController, Initializable {
     public void onAttachGroupButtonClick() {}
 
     @FXML
-    public void onAttachCardButtonClick() {}
+    public void onAttachCardButtonClick() {
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
+                    Client.getInstance().send(
+                            new AttachCardEvent(
+                                    selectedCardIDsInHand.getFirst(),
+                                    selectedGroupsWildCards.getFirst().getGroupNumber(),
+                                    selectedGroupsWildCards.getFirst().getPosition()
+                            )
+                    );
+                    // wait server response before doing something else
+                }
+        );
+    }
 
     @FXML
     public void onReplaceJollyButtonClick() {}
@@ -831,7 +894,9 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @FXML
-    public void onCancelTurnButtonClick() {}
+    public void onCancelTurnButtonClick() {
+        Client.getInstance().send(new CancelTurnEvent());
+    }
 
     @FXML
     public void onExitButtonClick() {
