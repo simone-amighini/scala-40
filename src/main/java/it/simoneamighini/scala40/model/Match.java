@@ -80,16 +80,17 @@ public class Match implements Serializable {
             addPointsToPlayers();
             finished = true;
             game.postMatchProcedure();
-            return;
+        } else {
+            int currentPlayerIndex = players.indexOf(currentPlayer);
+            if (currentPlayerIndex != players.size() - 1) {
+                currentPlayer = players.get(currentPlayerIndex + 1);
+            } else {
+                currentPlayer = players.getFirst();
+                turnNumber++;
+            }
         }
 
-        int currentPlayerIndex = players.indexOf(currentPlayer);
-        if (currentPlayerIndex != players.size() - 1) {
-            currentPlayer = players.get(currentPlayerIndex + 1);
-        } else {
-            currentPlayer = players.getFirst();
-            turnNumber++;
-        }
+        PersistenceUtility.saveGameOnDisk(game);
     }
 
     private void fillDeckIfEmpty() {
@@ -176,9 +177,5 @@ public class Match implements Serializable {
 
     JollyReplacer getJollyReplacer() {
         return jollyReplacer;
-    }
-
-    void requestGameSaving() {
-        game.saveOnDisk();
     }
 }

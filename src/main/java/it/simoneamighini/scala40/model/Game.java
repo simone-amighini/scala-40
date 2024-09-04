@@ -79,8 +79,4 @@ public class Game implements Serializable {
             // TODO: notify game end to controller?
         }
     }
-
-    void saveOnDisk() {
-        PersistenceUtility.saveGameOnDisk(this);
-    }
 }

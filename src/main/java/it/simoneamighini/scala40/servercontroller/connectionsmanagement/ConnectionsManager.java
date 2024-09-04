@@ -142,6 +142,17 @@ public class ConnectionsManager implements NetworkObserver {
         }
     }
 
+    public synchronized void handle(OpeningEvent event) {
+        if (state instanceof BlockedConnectionsState) {
+            GameController.getInstance().handle(event);
+        } else {
+            sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
     @Override
     public synchronized void connectionClosingUpdate(String remoteAddress) {
         if (usernameConnectionMap.containsValue(remoteAddress)) {
@@ -167,11 +178,9 @@ public class ConnectionsManager implements NetworkObserver {
             players.add(new Player(username));
         }
 
-        Game game = new Game(players);
-
-        PersistenceUtility.saveGameOnDisk(game);
         sendEventBroadcast(new NewGameEvent());
 
+        Game game = new Game(players);
         GameController.getInstance().setGame(game);
         GameController.getInstance().start(false);
     }

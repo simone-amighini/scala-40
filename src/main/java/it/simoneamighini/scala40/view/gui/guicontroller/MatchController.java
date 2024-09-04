@@ -122,6 +122,7 @@ public class MatchController implements SceneController, Initializable {
         showGroups();
         showHand();
         showPlayersInfo();
+        enableValidMatchRelatedButtons();
     }
 
     @Override
@@ -129,13 +130,13 @@ public class MatchController implements SceneController, Initializable {
         if (event.getUsername().equals(Data.getInstance().getUsername())) {
             Platform.runLater(
                     () -> {
-                        showNotification("È il tuo turno, " + event.getUsername());
+                        showNotification("È il tuo turno, " + event.getUsername() + ".");
                         drawFromDeckButton.setDisable(false);
                         pickFromDiscardedCardsButton.setDisable(!Data.getInstance().hasPlayerOpened());
                     }
             );
         } else {
-            Platform.runLater(() -> showNotification("E il turno di " + event.getUsername()));
+            Platform.runLater(() -> showNotification("È il turno di " + event.getUsername() + "."));
         }
     }
 
@@ -150,8 +151,45 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
+    public void handle(OpeningConfirmationEvent event) {
+        Platform.runLater(
+                () -> {
+                    // create new groups
+                    for (List<String> group : groupsAddedForOpening) {
+                        createGroup(group);
+                    }
+
+                    // reset selection
+                    onResetAddedGroupsButtonClick();
+
+                    // update hand
+                    for (List<String> group : groupsAddedForOpening) {
+                        for (String cardID: group) {
+                            removeCardFromHand(cardID);
+                        }
+                    }
+
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
+    public void handle(OpeningDenialEvent event) {
+        Platform.runLater(
+                () -> {
+                    showNotification("Non è possibile aprire usando queste carte.\n" +
+                            "Prova a selezionare altri giochi.");
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
     public void handle(TurnEndEvent event) {
         Data.getInstance().setPlayerAlreadyPickedACard(false);
+        deckImageView.setVisible(true);
+        discardedCardsImageView.setVisible(true);
     }
 
     @Override
@@ -195,8 +233,7 @@ public class MatchController implements SceneController, Initializable {
                                     groupsAddedForOpening.isEmpty()
                     );
                     viewAddedGroupsButton.setDisable(
-                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
-                                    Data.getInstance().hasPlayerOpened() ||
+                                    Data.getInstance(). hasPlayerOpened() ||
                                     groupsAddedForOpening.isEmpty()
                     );
                     discardCardButton.setDisable(
@@ -244,14 +281,13 @@ public class MatchController implements SceneController, Initializable {
                     discardedCardsImageView.setImage(null);
 
                     groupsVBox.getChildren().clear();
+                    internalGroupHBoxes.clear();
                     groupsCardIDImageViewMaps.clear();
                     selectedCardsInGroups.clear();
 
                     handVBox.getChildren().clear();
                     handCardIDImageViewMap.clear();
                     selectedCardIDsInHand.clear();
-
-                    groupsAddedForOpening.clear();
 
                     selectedGroupsWildCards.clear();
 
@@ -346,31 +382,8 @@ public class MatchController implements SceneController, Initializable {
                 () -> {
                     List<List<String>> groups = Data.getInstance().getGroups();
                     try {
-                        for (int i = 0; i < groups.size(); i++) {
-                            // generate scroll pane
-                            ScrollPane generatedScrollPane = generateCardsScrollPane();
-                            groupsVBox.getChildren().add(generatedScrollPane);
-
-                            // initialize group data and add wild cards + cards
-                            internalGroupHBoxes.add((HBox) generatedScrollPane.getContent());
-                            groupsCardIDImageViewMaps.add(i, new HashMap<>());
-                            selectedCardsInGroups.add(i, new ArrayList<>());
-
-                            WildCard startWildCard = new WildCard(i, WildCard.Position.START);
-                            startWildCard.setOnMouseClicked(event -> onWildCardMouseClick(startWildCard));
-                            startWildCard.setOnMouseEntered(event -> onWildCardMouseEnter(startWildCard));
-                            startWildCard.setOnMouseExited(event -> onWildCardMouseExit(startWildCard));
-                            internalGroupHBoxes.get(i).getChildren().add(startWildCard);
-
-                            for (String cardID : groups.get(i)) {
-                                addCardToGroup(i, cardID, generateImageView(cardID));
-                            }
-
-                            WildCard endWildCard = new WildCard(i, WildCard.Position.END);
-                            endWildCard.setOnMouseClicked(event -> onWildCardMouseClick(endWildCard));
-                            endWildCard.setOnMouseEntered(event -> onWildCardMouseEnter(endWildCard));
-                            endWildCard.setOnMouseExited(event -> onWildCardMouseExit(endWildCard));
-                            internalGroupHBoxes.get(i).getChildren().add(endWildCard);
+                        for (List<String> group : Data.getInstance().getGroups()) {
+                            createGroup(group);
                         }
                     } catch (NullPointerException exception) {
                         // show nothing
@@ -379,14 +392,40 @@ public class MatchController implements SceneController, Initializable {
         );
     }
 
-    private void addCardToGroup(int groupNumber, String cardID, ImageView imageView) {
+    private void createGroup(List<String> cardIDs) {
         Platform.runLater(
                 () -> {
-                    internalGroupHBoxes.get(groupNumber).getChildren().add(imageView);
-                    imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
-                    groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
+                    ScrollPane generatedScrollPane = generateCardsScrollPane();
+                    groupsVBox.getChildren().add(generatedScrollPane);
+                    internalGroupHBoxes.add((HBox) generatedScrollPane.getContent());
+                    groupsCardIDImageViewMaps.add(new HashMap<>());
+                    selectedCardsInGroups.add(new ArrayList<>());
+
+                    int groupNumber = groupsVBox.getChildren().size() - 1;
+
+                    WildCard startWildCard = new WildCard(groupNumber, WildCard.Position.START);
+                    startWildCard.setOnMouseClicked(event -> onWildCardMouseClick(startWildCard));
+                    startWildCard.setOnMouseEntered(event -> onWildCardMouseEnter(startWildCard));
+                    startWildCard.setOnMouseExited(event -> onWildCardMouseExit(startWildCard));
+                    internalGroupHBoxes.get(groupNumber).getChildren().add(startWildCard);
+
+                    for (String cardID : cardIDs) {
+                        addCardToGroup(groupNumber, cardID, generateImageView(cardID));
+                    }
+
+                    WildCard endWildCard = new WildCard(groupNumber, WildCard.Position.END);
+                    endWildCard.setOnMouseClicked(event -> onWildCardMouseClick(endWildCard));
+                    endWildCard.setOnMouseEntered(event -> onWildCardMouseEnter(endWildCard));
+                    endWildCard.setOnMouseExited(event -> onWildCardMouseExit(endWildCard));
+                    internalGroupHBoxes.get(groupNumber).getChildren().add(endWildCard);
                 }
         );
+    }
+
+    private void addCardToGroup(int groupNumber, String cardID, ImageView imageView) {
+        internalGroupHBoxes.get(groupNumber).getChildren().add(imageView);
+        imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
+        groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
     }
 
     private Integer getGroupNumberOfImageView(ImageView imageView) {
@@ -500,7 +539,14 @@ public class MatchController implements SceneController, Initializable {
                         // add cards
                         internalHandHBox = (HBox) generatedScrollPane.getContent();
                         for (String cardID : hand) {
-                            addCardToHand(cardID, generateImageView(cardID));
+                            ImageView generatedImageView = generateImageView(cardID);
+                            addCardToHand(cardID, generatedImageView);
+                            if (groupsAddedForOpening.stream()
+                                    .anyMatch(group -> group.contains(cardID))
+                            ) {
+                                applyDarkEffect(generatedImageView);
+                                generatedImageView.setDisable(true);
+                            }
                         }
                     } catch (NullPointerException exception) {
                         // show nothing
@@ -515,6 +561,15 @@ public class MatchController implements SceneController, Initializable {
                     internalHandHBox.getChildren().add(imageView);
                     imageView.setOnMouseClicked( event -> onHandCardImageViewClick(imageView));
                     handCardIDImageViewMap.put(cardID, imageView);
+                }
+        );
+    }
+
+    private void removeCardFromHand(String cardID) {
+        Platform.runLater(
+                () -> {
+                    internalHandHBox.getChildren().remove(handCardIDImageViewMap.get(cardID));
+                    handCardIDImageViewMap.remove(cardID);
                 }
         );
     }
@@ -639,7 +694,8 @@ public class MatchController implements SceneController, Initializable {
     private void showNotification(String message) {
         Label label = new Label(message);
         label.getStyleClass().add("normal-text");
-        PopupCreator.show("Avviso", 400, 200, label);
+        label.setWrapText(true);
+        PopupCreator.show("Avviso", 400, 200, label, true);
     }
 
     @FXML
@@ -655,7 +711,15 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @FXML
-    public void onOpeningButtonClick() {}
+    public void onOpeningButtonClick() {
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
+                    Client.getInstance().send(new OpeningEvent(groupsAddedForOpening));
+                    // wait for server response before doing something else
+                }
+        );
+    }
 
     @FXML
     public void onAddGroupButtonClick() {
@@ -729,14 +793,15 @@ public class MatchController implements SceneController, Initializable {
                         for (String cardID : group) {
                             innerGroupHBox.getChildren().add(generateImageView(cardID));
                         }
-                        containerVBox.getChildren().add(groupScrollPane);
+                        groupsVBox.getChildren().add(groupScrollPane);
                     }
 
                     PopupCreator.show(
                             "Anteprima apertura",
                             1280,
                             720,
-                            containerVBox
+                            containerVBox,
+                            false
                     );
                 }
         );

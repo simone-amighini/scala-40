@@ -1,16 +1,18 @@
 package it.simoneamighini.scala40.view.gui;
 
 import it.simoneamighini.scala40.view.gui.guicontroller.PopupController;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
 public class PopupCreator {
-    public static void show(String sceneTitle, int width, int height, Node node) {
+    public static void show(String sceneTitle, int width, int height, Node node, boolean timeout) {
         PopupController.addNode(node);
         Platform.runLater(
                 () -> {
@@ -29,6 +31,13 @@ public class PopupCreator {
                     popupStage.setMinHeight(height);
                     popupStage.setMaxHeight(height);
                     popupStage.setTitle(sceneTitle);
+
+                    if (timeout) {
+                        PauseTransition delay = new PauseTransition(Duration.seconds(2.5));
+                        delay.setOnFinished(event -> popupStage.close());
+                        delay.play();
+                    }
+
                     popupStage.show();
                 }
         );

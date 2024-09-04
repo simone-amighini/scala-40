@@ -98,7 +98,6 @@ public class Player implements Serializable {
 
     private void turnStartProcedure() {
         turnStarted = true;
-        match.requestGameSaving();
     }
 
     public boolean discardCard(String cardName) throws IllegalStateException {
