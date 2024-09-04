@@ -96,9 +96,9 @@ public class Sequence extends Group {
             }
         }
         Card lastCard = cards.getLast();
-        if (lastCard instanceof  FrenchCard) {
+        if (lastCard instanceof FrenchCard) {
             cardsWithoutJolly.add((FrenchCard) lastCard);
-        } else if (cards.getLast() instanceof JollyCard) {
+        } else if (lastCard instanceof JollyCard) {
             FrenchCard secondLastCard = (FrenchCard) cards.get(cards.size() - 2);
             cardsWithoutJolly.add(
                     new FrenchCard(
@@ -117,7 +117,7 @@ public class Sequence extends Group {
         int totalPoints = 0;
         List<FrenchCard> cardsWithoutJolly = cardsWithoutJolly(super.getCards());
 
-        for (int i = 0; i < cardsWithoutJolly.size() - 1; i++) {
+        for (int i = 0; i < cardsWithoutJolly.size(); i++) {
             FrenchCard currentCard = cardsWithoutJolly.get(i);
 
             // an ACE at the beginning always gives 1 point instead of 11 points (default points)
