@@ -12,6 +12,7 @@ public class MatchGenerator {
         );
 
         Game game = new Game(players);
+        game.startNewMatch();
 
         return game.getCurrentMatch();
     }

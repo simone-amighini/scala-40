@@ -101,7 +101,11 @@ public class Player implements Serializable {
         match.requestGameSaving();
     }
 
-    public boolean discardCard(String cardName) {
+    public boolean discardCard(String cardName) throws IllegalStateException {
+        if (!turnStarted) {
+            throw new IllegalStateException("Player " + username + "tried to discard a card before opening");
+        }
+
         Card card = getCardFromHand(cardName);
         List<Card> remainingCards = getHand();
         remainingCards.remove(card);
@@ -282,7 +286,7 @@ public class Player implements Serializable {
         return success;
     }
 
-    public boolean placeOpeningCards(String[][] groups) throws IllegalStateException {
+    public boolean placeOpeningCards(List<List<String>> groups) throws IllegalStateException {
         if (!turnStarted) {
             throw new IllegalStateException("Player " + username + " tried to open before " +
                     "picking a card");
@@ -295,7 +299,7 @@ public class Player implements Serializable {
 
         List<List<Card>> cardGroups = new ArrayList<>();
         List<Card> allOpeningCards = new ArrayList<>();
-        for (String[] group : groups) {
+        for (List<String> group : groups) {
             List<Card> cards = new ArrayList<>();
             for (String cardName : group) {
                 Card card = getCardFromHand(cardName);
@@ -321,7 +325,7 @@ public class Player implements Serializable {
         boolean success;
         success = match.getOpeningPlacer().place(cardGroups);
         if (success) {
-            hand.removeAll(cardGroups);
+            cardGroups.forEach(hand::removeAll);
             openingCompleted = true;
             openedInCurrentTurn = true;
         }
