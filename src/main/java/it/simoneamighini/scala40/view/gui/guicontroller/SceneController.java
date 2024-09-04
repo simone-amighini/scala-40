@@ -52,4 +52,8 @@ public interface SceneController {
     default void handle(CancelTurnConfirmationEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(DiscardCardDenialEvent event) {
+        criticalErrorManagement();
+    }
 }

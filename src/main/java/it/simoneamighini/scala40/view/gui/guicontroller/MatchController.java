@@ -1,9 +1,6 @@
 package it.simoneamighini.scala40.view.gui.guicontroller;
 
-import it.simoneamighini.scala40.events.CancelTurnConfirmationEvent;
-import it.simoneamighini.scala40.events.MatchInfoUpdateEvent;
-import it.simoneamighini.scala40.events.TurnEndEvent;
-import it.simoneamighini.scala40.events.TurnStartEvent;
+import it.simoneamighini.scala40.events.*;
 import it.simoneamighini.scala40.networking.Client;
 import it.simoneamighini.scala40.view.Data;
 import it.simoneamighini.scala40.view.gui.PopupCreator;
@@ -132,11 +129,24 @@ public class MatchController implements SceneController, Initializable {
         if (event.getUsername().equals(Data.getInstance().getUsername())) {
             Platform.runLater(
                     () -> {
+                        showNotification("È il tuo turno, " + event.getUsername());
                         drawFromDeckButton.setDisable(false);
                         pickFromDiscardedCardsButton.setDisable(!Data.getInstance().hasPlayerOpened());
                     }
             );
+        } else {
+            Platform.runLater(() -> showNotification("E il turno di " + event.getUsername()));
         }
+    }
+
+    @Override
+    public void handle(DiscardCardDenialEvent event) {
+        Platform.runLater(
+                () -> {
+                    showNotification("Non puoi scartare questa carta.");
+                    enableValidMatchRelatedButtons();
+                }
+        );
     }
 
     @Override
@@ -145,9 +155,7 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
-    public void handle(CancelTurnConfirmationEvent event) {
-        Data.getInstance().setPlayerAlreadyPickedACard(false);
-    }
+    public void handle(CancelTurnConfirmationEvent event) {}
 
     private void disableAllMatchRelatedButtons() {
         Platform.runLater(
@@ -215,6 +223,9 @@ public class MatchController implements SceneController, Initializable {
                                     getNumberOfSelectedCardInGroups() != 1 ||
                                     selectedCardIDsInHand.size() != 1 ||
                                     !selectedGroupsWildCards.isEmpty()
+                    );
+                    cancelTurnButton.setDisable(
+                            !Data.getInstance().hasPlayerAlreadyPickedACard()
                     );
                 }
         );
@@ -540,7 +551,7 @@ public class MatchController implements SceneController, Initializable {
                 () -> {
                     playersInfoVBox.getChildren().clear();
 
-                    Label titleLabel = new Label("[nome]: [punti]     [aperto] [#carte]");
+                    Label titleLabel = new Label("nome: punti [aperto] [carte mano]");
                     titleLabel.getStyleClass().add("small-text");
                     titleLabel.setStyle("-fx-text-fill: rgb(64,64,64)");
                     playersInfoVBox.getChildren().add(titleLabel);
@@ -549,7 +560,7 @@ public class MatchController implements SceneController, Initializable {
                         StringBuilder builder = new StringBuilder();
                         builder.append(username).append(": ");
                         builder.append(Data.getInstance().getUsernamePointsMap().get(username));
-                        builder.append("     ");
+                        builder.append(" ");
                         if (Data.getInstance().getUsernameOpeningCompletedMap().get(username)) {
                             // player has completed the opening
                             builder.append("[✔]");
@@ -557,7 +568,7 @@ public class MatchController implements SceneController, Initializable {
                             // opening not completed
                             builder.append("[✖]");
                         }
-                        builder.append("  ")
+                        builder.append(" ")
                                 .append("[")
                                 .append(Data.getInstance().getUsernameRemainingCardsMap().get(username))
                                 .append("]");
@@ -634,11 +645,13 @@ public class MatchController implements SceneController, Initializable {
     @FXML
     public void onDrawFromDeckButtonClick() {
         pickCardManagement(Data.getInstance().getDeckTopCardID(), deckImageView);
+        Client.getInstance().send(new DrawFromDeckEvent());
     }
 
     @FXML
     public void onPickFromDiscardedCardsButtonClick() {
         pickCardManagement(Data.getInstance().getVisibleDiscardedCardID(), discardedCardsImageView);
+        Client.getInstance().send(new PickFromDiscardedCardsEvent());
     }
 
     @FXML
@@ -742,7 +755,15 @@ public class MatchController implements SceneController, Initializable {
     public void onReplaceJollyButtonClick() {}
 
     @FXML
-    public void onDiscardCardButtonClick() {}
+    public void onDiscardCardButtonClick() {
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
+                    Client.getInstance().send(new DiscardCardEvent(selectedCardIDsInHand.getFirst()));
+                    // wait server response before doing something else
+                }
+        );
+    }
 
     @FXML
     public void onCancelTurnButtonClick() {}
