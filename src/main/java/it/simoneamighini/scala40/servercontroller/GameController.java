@@ -44,6 +44,7 @@ public class GameController {
     public void start(boolean resumeGame) {
         if (!resumeGame) {
             game.startNewMatch();
+            PersistenceUtility.saveGameOnDisk(game);
         }
         sendMatchAndInfoUpdateEvent();
         sendTurnStartEvent();
@@ -126,15 +127,49 @@ public class GameController {
     }
 
     public void handle(DiscardCardEvent event) {
-        boolean success = game.getCurrentMatch().getCurrentPlayer().discardCard(event.getCardId());
-        if (success) {
+        try {
+            boolean success = game.getCurrentMatch().getCurrentPlayer().discardCard(event.getCardId());
+            if (success) {
+                ConnectionsManager.getInstance().sendEvent(
+                        new TurnEndEvent(),
+                        event.getRemoteAddress()
+                );
+
+                game.getCurrentMatch().goToNextPlayer();
+                sendMatchAndInfoUpdateEvent();
+                sendTurnStartEvent();
+
+            } else {
+                ConnectionsManager.getInstance().sendEvent(
+                        new DiscardCardDenialEvent(),
+                        event.getRemoteAddress()
+                );
+            }
+        } catch (IllegalStateException exception) {
             ConnectionsManager.getInstance().sendEvent(
-                    new TurnEndEvent(),
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
                     event.getRemoteAddress()
             );
-        } else {
+        }
+    }
+
+    public void handle(OpeningEvent event) {
+        try {
+            boolean success = game.getCurrentMatch().getCurrentPlayer().placeOpeningCards(event.getGroups());
+            if (success) {
+                ConnectionsManager.getInstance().sendEvent(
+                        new OpeningConfirmationEvent(),
+                        event.getRemoteAddress()
+                );
+            } else {
+                ConnectionsManager.getInstance().sendEvent(
+                        new OpeningDenialEvent(),
+                        event.getRemoteAddress()
+                );
+            }
+        } catch (IllegalStateException exception) {
             ConnectionsManager.getInstance().sendEvent(
-                    new DiscardCardDenialEvent(),
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
                     event.getRemoteAddress()
             );
         }

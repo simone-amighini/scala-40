@@ -56,4 +56,12 @@ public interface SceneController {
     default void handle(DiscardCardDenialEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(OpeningConfirmationEvent event) {
+        criticalErrorManagement();
+    }
+
+    default void handle(OpeningDenialEvent event) {
+        criticalErrorManagement();
+    }
 }
