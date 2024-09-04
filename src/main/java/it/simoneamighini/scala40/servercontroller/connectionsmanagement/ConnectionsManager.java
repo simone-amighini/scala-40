@@ -1,9 +1,6 @@
 package it.simoneamighini.scala40.servercontroller.connectionsmanagement;
 
-import it.simoneamighini.scala40.events.FirstPlayerChoicesEvent;
-import it.simoneamighini.scala40.events.GameEnterEvent;
-import it.simoneamighini.scala40.events.GameResumeEvent;
-import it.simoneamighini.scala40.events.NewGameEvent;
+import it.simoneamighini.scala40.events.*;
 import it.simoneamighini.scala40.model.Game;
 import it.simoneamighini.scala40.model.PersistenceUtility;
 import it.simoneamighini.scala40.model.Player;
@@ -110,6 +107,39 @@ public class ConnectionsManager implements NetworkObserver {
 
     public synchronized void handle(FirstPlayerChoicesEvent event) {
         state.handle(event);
+    }
+
+    public synchronized void handle(DrawFromDeckEvent event) {
+        if (state instanceof BlockedConnectionsState) {
+            GameController.getInstance().handle(event);
+        } else {
+            sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
+    public synchronized void handle(PickFromDiscardedCardsEvent event) {
+        if (state instanceof BlockedConnectionsState) {
+            GameController.getInstance().handle(event);
+        } else {
+            sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
+    public synchronized void handle(DiscardCardEvent event) {
+        if (state instanceof BlockedConnectionsState) {
+            GameController.getInstance().handle(event);
+        } else {
+            sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
     }
 
     @Override
