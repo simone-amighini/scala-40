@@ -47,7 +47,7 @@ class JollyReplacerTest {
 
         match.addGroup(getCombination_4_4_4_O_missingClubs());
 
-        assertEquals(exceptedReturnedJolly, jollyReplacer.replace(0, clubsFour));
+        assertEquals(exceptedReturnedJolly, jollyReplacer.replace(clubsFour, 0, 3));
     }
 
     @Test
@@ -58,7 +58,7 @@ class JollyReplacerTest {
 
         match.addGroup(getCombination_4_4_4_O_missingClubs());
 
-        assertNull(jollyReplacer.replace(0, diamondsFour));
+        assertNull(jollyReplacer.replace(diamondsFour, 0, 3));
     }
 
     @Test
@@ -70,6 +70,6 @@ class JollyReplacerTest {
 
         match.addGroup(getSequence_O_10_J_Q_K_diamonds());
 
-        assertEquals(exceptedReturnedJolly, jollyReplacer.replace(0, diamondsNine));
+        assertEquals(exceptedReturnedJolly, jollyReplacer.replace(diamondsNine, 0, 0));
     }
 }

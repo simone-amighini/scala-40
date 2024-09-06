@@ -186,6 +186,17 @@ public class ConnectionsManager implements NetworkObserver {
         }
     }
 
+    public synchronized void handle(ReplaceJollyEvent event) {
+        if (state instanceof BlockedConnectionsState) {
+            GameController.getInstance().handle(event);
+        } else {
+            sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
     public synchronized void handle(CancelTurnEvent event) {
         if (state instanceof BlockedConnectionsState) {
             GameController.getInstance().handle(event);

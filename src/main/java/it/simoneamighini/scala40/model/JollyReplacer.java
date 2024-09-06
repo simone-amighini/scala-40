@@ -10,23 +10,22 @@ class JollyReplacer implements Serializable {
         this.match = match;
     }
 
-    JollyCard replace(int groupNumber, Card card) {
-        // find the jolly card inside the group (if exists)
-        Group group = match.getGroups().get(groupNumber);
-        List<Card> groupCards = group.getCards();
-        JollyCard jollyCard = null;
-        int jollyCardIndex = 0;
+    JollyCard replace(Card card, int groupNumber, int jollyIndex) {
+        try {
+            // check if the specified card is actually a jolly card
+            JollyCard jollyCard;
+            Group group = match.getGroups().get(groupNumber);
+            List<Card> groupCards = group.getCards();
+            Card cardAtJollyIndex = groupCards.get(jollyIndex);
 
-        for (Card groupCard : groupCards) {
-            if (groupCard instanceof JollyCard) {
-                jollyCard = (JollyCard) groupCard;
-                jollyCardIndex = groupCards.indexOf(jollyCard);
+            if (cardAtJollyIndex instanceof JollyCard) {
+                jollyCard = (JollyCard) cardAtJollyIndex;
+            } else {
+                return null;
             }
-        }
 
-        // if the jolly exists then try to replace it with the passed card
-        if (jollyCard != null) {
-            groupCards.set(jollyCardIndex, card);
+            // if the jolly exists then try to replace it with the passed card
+            groupCards.set(jollyIndex, card);
 
             try {
                 Group combination = new Combination(groupCards);
@@ -43,9 +42,12 @@ class JollyReplacer implements Serializable {
             } catch (InvalidGroupException ignored) {
                 // the group is not a valid combination nor sequence
             }
-        }
 
-        // otherwise
-        return null;
+            // otherwise
+            return null;
+
+        } catch (Exception exception) {
+            return null;
+        }
     }
 }

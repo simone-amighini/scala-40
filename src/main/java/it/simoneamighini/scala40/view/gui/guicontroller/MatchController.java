@@ -70,6 +70,7 @@ public class MatchController implements SceneController, Initializable {
     private final List<HBox> internalGroupHBoxes = new ArrayList<>();
     private final List<Map<String, ImageView>> groupsCardIDImageViewMaps = new ArrayList<>();
     private final List<List<String>> selectedCardsInGroups = new ArrayList<>();
+    private int latestSelectedCardInGroupIndex = 0;
 
     private HBox internalHandHBox;
     private final Map<String, ImageView> handCardIDImageViewMap = new HashMap<>();
@@ -275,6 +276,48 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
+    public void handle(ReplaceJollyConfirmationEvent event) {
+        Platform.runLater(
+                () -> {
+                    String cardID = selectedCardIDsInHand.getFirst();
+                    int groupNumber = getGroupNumberOfSingleSelectedCard();
+                    ImageView imageView = (ImageView) internalGroupHBoxes
+                            .get(groupNumber)
+                            .getChildren()
+                            .get(latestSelectedCardInGroupIndex);
+                    String jollyID = getCardIDFromImageView(
+                            groupsCardIDImageViewMaps.get(groupNumber),
+                            imageView
+                    );
+
+                    removeCardFromGroup(groupNumber, jollyID);
+                    insertCardInGroup(
+                            getGroupNumberOfSingleSelectedCard(),
+                            latestSelectedCardInGroupIndex,
+                            cardID,
+                            generateImageView(cardID)
+                    );
+                    removeCardFromHand(cardID);
+                    addCardToHand(jollyID, generateImageView(jollyID));
+                    selectedCardsInGroups.forEach(List::clear);
+                    selectedCardIDsInHand.clear();
+
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
+    public void handle(ReplaceJollyDenialEvent event) {
+        Platform.runLater(
+                () -> {
+                    showNotification("Non è possibile effettuare la sostituzione.");
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
     public void handle(TurnEndEvent event) {
         canCancelTurn = false;
         Data.getInstance().setPlayerAlreadyPickedACard(false);
@@ -389,7 +432,7 @@ public class MatchController implements SceneController, Initializable {
                     groupsVBox.getChildren().clear();
                     internalGroupHBoxes.clear();
                     groupsCardIDImageViewMaps.clear();
-                    selectedCardsInGroups.clear();
+                    selectedCardsInGroups.forEach(List::clear);
 
                     handVBox.getChildren().clear();
                     handCardIDImageViewMap.clear();
@@ -534,6 +577,18 @@ public class MatchController implements SceneController, Initializable {
         groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
     }
 
+    private void removeCardFromGroup(int groupNumber, String cardID) {
+        ImageView imageView = groupsCardIDImageViewMaps.get(groupNumber).get(cardID);
+        internalGroupHBoxes.get(groupNumber).getChildren().remove(imageView);
+        groupsCardIDImageViewMaps.get(groupNumber).remove(cardID);
+    }
+
+    private void insertCardInGroup(int groupNumber, int index, String cardID, ImageView imageView) {
+        internalGroupHBoxes.get(groupNumber).getChildren().add(index, imageView);
+        imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
+        groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
+    }
+
     private void attachCardToGroup(int groupNumber, WildCard.Position position, String cardID) {
         ImageView imageView = generateImageView(cardID);
         int placementIndex = switch (position) {
@@ -560,6 +615,17 @@ public class MatchController implements SceneController, Initializable {
         return groupNumber;
     }
 
+    private int getGroupNumberOfSingleSelectedCard() {
+        // there is only one card selected so the indexes are updated once (when selected card is found)
+        for (List<String> selectedGroup : selectedCardsInGroups) {
+            for (String cardID : selectedGroup) {
+                return selectedCardsInGroups.indexOf(selectedGroup);
+            }
+        }
+
+        throw new RuntimeException("No card selected! Cannot invoke this method!");
+    }
+
     private String getCardIDFromImageView(Map<String, ImageView> map, ImageView imageView) {
         return map.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), imageView))
@@ -581,7 +647,7 @@ public class MatchController implements SceneController, Initializable {
                         );
                         imageView.setEffect(null);
                     } else {
-                        // add it to selected cards and make it unavailable
+                        // add it to selected cards
                         selectedCardsInGroups.get(groupNumber).add(
                                 groupsCardIDImageViewMaps.get(groupNumber).entrySet().stream()
                                         .filter(entry -> Objects.equals(entry.getValue(), imageView))
@@ -589,6 +655,8 @@ public class MatchController implements SceneController, Initializable {
                                         .toList().getFirst()
                         );
                         applyShadowEffect(imageView);
+                        latestSelectedCardInGroupIndex = internalGroupHBoxes.get(groupNumber).getChildren()
+                                .indexOf(imageView);
                     }
 
                     enableValidMatchRelatedButtons();
@@ -983,7 +1051,22 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @FXML
-    public void onReplaceJollyButtonClick() {}
+    public void onReplaceJollyButtonClick() {
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
+
+                    Client.getInstance().send(
+                            new ReplaceJollyEvent(
+                                    selectedCardIDsInHand.getFirst(),
+                                    getGroupNumberOfSingleSelectedCard(),
+                                    latestSelectedCardInGroupIndex - 1
+                            )
+                    );
+                    // wait server response before doing something else
+                }
+        );
+    }
 
     @FXML
     public void onDiscardCardButtonClick() {

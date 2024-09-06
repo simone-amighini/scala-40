@@ -194,7 +194,8 @@ public class Player implements Serializable {
         success = match.getSingleCardAttacher().attach(card, groupNumber, position);
         if (success) {
             hand.remove(card);
-            for (JollyCard jollyReuseObligation : jollyReuseObligations) {
+            List<JollyCard> jollyReuseObligationsCopy = new ArrayList<>(jollyReuseObligations);
+            for (JollyCard jollyReuseObligation : jollyReuseObligationsCopy) {
                 if (card.equals(jollyReuseObligation)) {
                     cancelJollyReuseObligation(jollyReuseObligation);
                 }
@@ -233,7 +234,8 @@ public class Player implements Serializable {
         success = match.getGroupPlacer().place(group);
         if (success) {
             hand.removeAll(group);
-            for (JollyCard jollyReuseObligation : jollyReuseObligations) {
+            List<JollyCard> jollyReuseObligationsCopy = new ArrayList<>(jollyReuseObligations);
+            for (JollyCard jollyReuseObligation : jollyReuseObligationsCopy) {
                 if (group.contains(jollyReuseObligation)) {
                     cancelJollyReuseObligation(jollyReuseObligation);
                 }
@@ -277,7 +279,8 @@ public class Player implements Serializable {
         success = match.getGroupAttacher().attach(group, groupNumber, position);
         if (success) {
             hand.removeAll(group);
-            for (JollyCard jollyReuseObligation : jollyReuseObligations) {
+            List<JollyCard> jollyReuseObligationsCopy = new ArrayList<>(jollyReuseObligations);
+            for (JollyCard jollyReuseObligation : jollyReuseObligationsCopy) {
                 if (group.contains(jollyReuseObligation)) {
                     cancelJollyReuseObligation(jollyReuseObligation);
                 }
@@ -335,7 +338,7 @@ public class Player implements Serializable {
         return success;
     }
 
-    public boolean replaceJolly(int groupNumber, String cardName) throws IllegalStateException {
+    public boolean replaceJolly(String cardName, int groupNumber, int jollyIndex) throws IllegalStateException {
         if (!turnStarted) {
             throw new IllegalStateException("Player " + username + " tried to replace a jolly before " +
                     "picking a card");
@@ -350,7 +353,7 @@ public class Player implements Serializable {
         }
 
         Card card = getCardFromHand(cardName);
-        JollyCard jollyCard = match.getJollyReplacer().replace(groupNumber, card);
+        JollyCard jollyCard = match.getJollyReplacer().replace(card, groupNumber, jollyIndex);
         if (jollyCard != null) {
             hand.remove(card);
             hand.add(jollyCard);

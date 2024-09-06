@@ -259,8 +259,34 @@ public class GameController {
         }
     }
 
+    public void handle(ReplaceJollyEvent event) {
+        try {
+            boolean success = game.getCurrentMatch().getCurrentPlayer().replaceJolly(
+                    event.getCardID(),
+                    event.getGroupNumber(),
+                    event.getJollyIndex()
+            );
+            if (success) {
+                ConnectionsManager.getInstance().sendEvent(
+                        new ReplaceJollyConfirmationEvent(),
+                        event.getRemoteAddress()
+                );
+            } else {
+                ConnectionsManager.getInstance().sendEvent(
+                        new ReplaceJollyDenialEvent(),
+                        event.getRemoteAddress()
+                );
+            }
+        } catch (IllegalStateException exception) {
+            ConnectionsManager.getInstance().sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
     public void handle(CancelTurnEvent event) {
-        game = PersistenceUtility.loadGameFromDisk();
+        game = game.getCurrentMatch().getCurrentPlayer().cancelTurn();
         sendMatchAndInfoUpdateEvent();
         ConnectionsManager.getInstance().sendEvent(
                 new CancelTurnConfirmationEvent(),
