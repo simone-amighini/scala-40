@@ -80,4 +80,12 @@ public interface SceneController {
     default void handle(PlaceGroupDenialEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(AttachGroupConfirmationEvent event) {
+        criticalErrorManagement();
+    }
+
+    default void handle(AttachGroupDenialEvent event) {
+        criticalErrorManagement();
+    }
 }

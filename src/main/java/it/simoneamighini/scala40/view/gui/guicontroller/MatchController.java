@@ -79,6 +79,8 @@ public class MatchController implements SceneController, Initializable {
 
     private final List<WildCard> selectedGroupsWildCards = new ArrayList<>();
 
+    private boolean canCancelTurn = false;
+
     public static class WildCard extends Rectangle {
         public enum Position {
             START,
@@ -214,6 +216,41 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
+    public void handle(AttachGroupConfirmationEvent event) {
+        Platform.runLater(
+                () -> {
+                    List<String> group = new ArrayList<>();
+                    group.addAll(selectedCardIDsInHand);
+
+                    if (selectedGroupsWildCards.getFirst().getPosition().equals(WildCard.Position.START)) {
+                        // prepare the cards inside the group to be attached in the right order
+                        group = group.reversed();
+                    }
+
+                    for (String cardID: group) {
+                        attachCardToGroup(
+                                selectedGroupsWildCards.getFirst().getGroupNumber(),
+                                selectedGroupsWildCards.getFirst().getPosition(),
+                                selectedCardIDsInHand.getFirst()
+                        );
+                    }
+
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
+    public void handle(AttachGroupDenialEvent event) {
+        Platform.runLater(
+                () -> {
+                    showNotification("Non è possibile attaccare il gioco selezionato nella posizione scelta.");
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
     public void handle(AttachCardConfirmationEvent event) {
         Platform.runLater(
                 () -> {
@@ -239,6 +276,7 @@ public class MatchController implements SceneController, Initializable {
 
     @Override
     public void handle(TurnEndEvent event) {
+        canCancelTurn = false;
         Data.getInstance().setPlayerAlreadyPickedACard(false);
         deckImageView.setVisible(true);
         discardedCardsImageView.setVisible(true);
@@ -248,6 +286,7 @@ public class MatchController implements SceneController, Initializable {
     public void handle(CancelTurnConfirmationEvent event) {
         Platform.runLater(
                 () -> {
+                    canCancelTurn = false;
                     Data.getInstance().setPlayerAlreadyPickedACard(false);
                     deckImageView.setVisible(true);
                     discardedCardsImageView.setVisible(true);
@@ -328,7 +367,8 @@ public class MatchController implements SceneController, Initializable {
                                     !selectedGroupsWildCards.isEmpty()
                     );
                     cancelTurnButton.setDisable(
-                            !Data.getInstance().hasPlayerAlreadyPickedACard()
+                            !Data.getInstance().hasPlayerAlreadyPickedACard() ||
+                                    !canCancelTurn
                     );
                 }
         );
@@ -504,7 +544,7 @@ public class MatchController implements SceneController, Initializable {
         imageView.setOnMouseClicked(event -> onGroupCardImageViewClick(imageView));
         groupsCardIDImageViewMaps.get(groupNumber).put(cardID, imageView);
 
-        selectedCardIDsInHand.removeFirst();
+        selectedCardIDsInHand.remove(cardID);
         onWildCardMouseClick(selectedGroupsWildCards.getFirst());
         removeCardFromHand(cardID);
     }
@@ -788,6 +828,7 @@ public class MatchController implements SceneController, Initializable {
     @FXML
     public void onPickFromDiscardedCardsButtonClick() {
         pickCardManagement(Data.getInstance().getVisibleDiscardedCardID(), discardedCardsImageView);
+        canCancelTurn = true;
         Client.getInstance().send(new PickFromDiscardedCardsEvent());
     }
 
@@ -905,7 +946,24 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @FXML
-    public void onAttachGroupButtonClick() {}
+    public void onAttachGroupButtonClick() {
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
+
+                    List<String> group = new ArrayList<>();
+                    group.addAll(selectedCardIDsInHand);
+                    Client.getInstance().send(
+                            new AttachGroupEvent(
+                                    group,
+                                    selectedGroupsWildCards.getFirst().getGroupNumber(),
+                                    selectedGroupsWildCards.getFirst().getPosition()
+                            )
+                    );
+                    // wait server response before doing something else
+                }
+        );
+    }
 
     @FXML
     public void onAttachCardButtonClick() {

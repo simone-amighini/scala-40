@@ -245,7 +245,11 @@ public class Player implements Serializable {
         return success;
     }
 
-    public boolean attachGroup(String[] cardNames, int groupNumber, Position position) throws IllegalStateException {
+    public boolean attachGroup(
+            List<String> cardNames,
+            int groupNumber,
+            Position position
+    ) throws IllegalStateException {
         if (!turnStarted) {
             throw new IllegalStateException("Player " + username + " tried to attach a group before " +
                     "picking a card");
@@ -262,7 +266,7 @@ public class Player implements Serializable {
 
         List<Card> group = new ArrayList<>();
         for (String cardName : cardNames) {
-            Card card = getCardFromHand(cardName);
+            group.add(getCardFromHand(cardName));
         }
 
         if (!prePlacementCheckPassed(group)) {
