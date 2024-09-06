@@ -186,6 +186,34 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @Override
+    public void handle(PlaceGroupConfirmationEvent event) {
+        Platform.runLater(
+                () -> {
+                    List<String> group = new ArrayList<>();
+                    group.addAll(selectedCardIDsInHand);
+
+                    createGroup(group);
+                    selectedCardIDsInHand.clear();
+                    for (String cardID: group) {
+                        removeCardFromHand(cardID);
+                    }
+
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
+    public void handle(PlaceGroupDenialEvent event) {
+        Platform.runLater(
+                () -> {
+                    showNotification("Non è possibile piazzare questo gioco.");
+                    enableValidMatchRelatedButtons();
+                }
+        );
+    }
+
+    @Override
     public void handle(AttachCardConfirmationEvent event) {
         Platform.runLater(
                 () -> {
@@ -267,8 +295,12 @@ public class MatchController implements SceneController, Initializable {
                                     groupsAddedForOpening.isEmpty()
                     );
                     viewAddedGroupsButton.setDisable(
-                                    Data.getInstance(). hasPlayerOpened() ||
+                            Data.getInstance().hasPlayerOpened() ||
                                     groupsAddedForOpening.isEmpty()
+                    );
+                    placeGroupButton.setDisable(
+                            !Data.getInstance().hasPlayerOpened() ||
+                                    selectedCardIDsInHand.size() <= 2
                     );
                     discardCardButton.setDisable(
                             !Data.getInstance().hasPlayerAlreadyPickedACard() ||
@@ -857,7 +889,20 @@ public class MatchController implements SceneController, Initializable {
     }
 
     @FXML
-    public void onPlaceGroupButtonClick() {}
+    public void onPlaceGroupButtonClick() {
+        Platform.runLater(
+                () -> {
+                    disableAllMatchRelatedButtons();
+
+                    List<String> group = new ArrayList<>();
+                    group.addAll(selectedCardIDsInHand);
+                    Client.getInstance().send(
+                            new PlaceGroupEvent(group)
+                    );
+                    // wait server response before doing something else
+                }
+        );
+    }
 
     @FXML
     public void onAttachGroupButtonClick() {}

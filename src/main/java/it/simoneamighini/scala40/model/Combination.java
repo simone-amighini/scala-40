@@ -30,7 +30,6 @@ public class Combination extends Group {
                 .distinct()
                 .count() == frenchCards.size();
 
-
         boolean checkPassed = threeOrFourCards &&
                 noMoreThanOneJolly &&
                 allFrenchCardsWithSameRank &&
