@@ -197,6 +197,37 @@ public class GameController {
         }
     }
 
+    public void handle(AttachGroupEvent event) {
+        try {
+            Position attachPosition = switch (event.getPosition()) {
+                case START -> Position.START;
+                case END -> Position.END;
+            };
+
+            boolean success = game.getCurrentMatch().getCurrentPlayer().attachGroup(
+                    event.getGroup(),
+                    event.getGroupNumber(),
+                    attachPosition
+            );
+            if (success) {
+                ConnectionsManager.getInstance().sendEvent(
+                        new AttachGroupConfirmationEvent(),
+                        event.getRemoteAddress()
+                );
+            } else {
+                ConnectionsManager.getInstance().sendEvent(
+                        new AttachGroupDenialEvent(),
+                        event.getRemoteAddress()
+                );
+            }
+        } catch (IllegalStateException exception) {
+            ConnectionsManager.getInstance().sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
     public void handle(AttachCardEvent event) {
         try {
             Position attachPosition = switch (event.getPosition()) {
