@@ -175,6 +175,28 @@ public class GameController {
         }
     }
 
+    public void handle(PlaceGroupEvent event) {
+        try {
+            boolean success = game.getCurrentMatch().getCurrentPlayer().placeGroup(event.getGroup());
+            if (success) {
+                ConnectionsManager.getInstance().sendEvent(
+                        new PlaceGroupConfirmationEvent(),
+                        event.getRemoteAddress()
+                );
+            } else {
+                ConnectionsManager.getInstance().sendEvent(
+                        new PlaceGroupDenialEvent(),
+                        event.getRemoteAddress()
+                );
+            }
+        } catch (IllegalStateException exception) {
+            ConnectionsManager.getInstance().sendEvent(
+                    new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
+                    event.getRemoteAddress()
+            );
+        }
+    }
+
     public void handle(AttachCardEvent event) {
         try {
             Position attachPosition = switch (event.getPosition()) {

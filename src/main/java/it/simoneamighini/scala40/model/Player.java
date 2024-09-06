@@ -206,7 +206,7 @@ public class Player implements Serializable {
         return success;
     }
 
-    public boolean placeGroup(String[] cardNames) throws IllegalStateException {
+    public boolean placeGroup(List<String> cardNames) throws IllegalStateException {
         if (!turnStarted) {
             throw new IllegalStateException("Player " + username + " tried to place a group before " +
                     "picking a card");
@@ -223,7 +223,7 @@ public class Player implements Serializable {
 
         List<Card> group = new ArrayList<>();
         for (String cardName : cardNames) {
-            Card card = getCardFromHand(cardName);
+            group.add(getCardFromHand(cardName));
         }
         if (!prePlacementCheckPassed(group)) {
             return false;
