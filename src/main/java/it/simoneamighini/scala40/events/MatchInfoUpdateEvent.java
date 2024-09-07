@@ -11,6 +11,7 @@ public class MatchInfoUpdateEvent extends Event {
     private final String username;
     private final int matchNumber;
     private final int turnNumber;
+    private final List<String> usernames;
     private final Map<String, Integer> usernamePointsMap;
     private final Map<String, Boolean> usernameOpeningCompletedMap;
     private final Map<String, Integer> usernameRemainingCardsMap;
@@ -23,6 +24,7 @@ public class MatchInfoUpdateEvent extends Event {
             String username,
             int matchNumber,
             int turnNumber,
+            List<String> usernames,
             Map<String, Integer> usernamePointsMap,
             Map<String, Boolean> usernameOpeningCompletedMap,
             Map<String, Integer> usernameRemainingCardsMap,
@@ -35,6 +37,7 @@ public class MatchInfoUpdateEvent extends Event {
         this.username = username;
         this.matchNumber = matchNumber;
         this.turnNumber = turnNumber;
+        this.usernames = usernames;
         this.usernamePointsMap = usernamePointsMap;
         this.usernameOpeningCompletedMap = usernameOpeningCompletedMap;
         this.usernameRemainingCardsMap = usernameRemainingCardsMap;
@@ -49,6 +52,7 @@ public class MatchInfoUpdateEvent extends Event {
         Data.getInstance().setUsername(username);
         Data.getInstance().setMatchNumber(matchNumber);
         Data.getInstance().setTurnNumber(turnNumber);
+        Data.getInstance().setUsernames(usernames);
         Data.getInstance().setUsernamePointsMap(usernamePointsMap);
         Data.getInstance().setUsernameOpeningCompletedMap(usernameOpeningCompletedMap);
         Data.getInstance().setUsernameRemainingCardsMap(usernameRemainingCardsMap);

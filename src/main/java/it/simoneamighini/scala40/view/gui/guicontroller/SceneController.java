@@ -96,4 +96,12 @@ public interface SceneController {
     default void handle(ReplaceJollyDenialEvent event) {
         criticalErrorManagement();
     }
+
+    default void handle(EndMatchEvent event) {
+        criticalErrorManagement();
+    }
+
+    default void handle(EndGameEvent event) {
+        criticalErrorManagement();
+    }
 }

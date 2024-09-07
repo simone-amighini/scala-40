@@ -72,7 +72,7 @@ public class Match implements Serializable {
         return currentPlayer;
     }
 
-    public void goToNextPlayer() {
+    public void goToNextPlayer() throws EndOfGame, EndOfMatch {
         justStarted = false;
         fillDeckIfEmpty();
 

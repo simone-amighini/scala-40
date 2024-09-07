@@ -72,11 +72,12 @@ public class Game implements Serializable {
         matchNumber++;
     }
 
-    void postMatchProcedure() {
-        // TODO: notify match end to controller?
-        // if only 1 player remains active, the game is finished
+    void postMatchProcedure() throws EndOfGame, EndOfMatch {
         if (getActivePlayers().size() == 1) {
-            // TODO: notify game end to controller?
+            // if only 1 player remains active, the game is finished
+            throw new EndOfGame();
+        } else {
+            throw new EndOfMatch();
         }
     }
 }
