@@ -19,6 +19,7 @@ public class Data {
     private int matchNumber;
     private int turnNumber;
     private boolean playerAlreadyPickedACard;
+    private List<String> usernames;
     private Map<String, Integer> usernamePointsMap;
     private Map<String, Boolean> usernameOpeningCompletedMap;
     private Map<String, Integer> usernameRemainingCardsMap;
@@ -26,6 +27,8 @@ public class Data {
     private String visibleDiscardedCardID;
     private List<List<String>> groups;
     private List<String> hand;
+    private List<String> finalRanking;
+    private boolean isGameEnded;
 
     private Data() {}
 
@@ -96,6 +99,14 @@ public class Data {
         return playerAlreadyPickedACard;
     }
 
+    public List<String> getUsernames() {
+        return usernames;
+    }
+
+    public void setUsernames(List<String> usernames) {
+        this.usernames = usernames;
+    }
+
     public Map<String, Integer> getUsernamePointsMap() {
         return usernamePointsMap;
     }
@@ -158,5 +169,21 @@ public class Data {
 
     public void setPlayerHasOpened(boolean playerHasOpened) {
         usernameOpeningCompletedMap.put(username, playerHasOpened);
+    }
+
+    public List<String> getFinalRanking() {
+        return finalRanking;
+    }
+
+    public void setFinalRanking(List<String> finalRanking) {
+        this.finalRanking = finalRanking;
+    }
+
+    public void setGameEnded(boolean gameEnded) {
+        isGameEnded = gameEnded;
+    }
+
+    public boolean isGameEnded() {
+        return isGameEnded;
     }
 }

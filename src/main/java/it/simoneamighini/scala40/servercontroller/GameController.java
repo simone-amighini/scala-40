@@ -4,10 +4,7 @@ import it.simoneamighini.scala40.events.*;
 import it.simoneamighini.scala40.model.*;
 import it.simoneamighini.scala40.servercontroller.connectionsmanagement.ConnectionsManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameController {
     private static GameController instance;
@@ -85,6 +82,7 @@ public class GameController {
                             player.getUsername(),
                             matchNumber,
                             turnNumber,
+                            currentMatch.getPlayers().stream().map(Player::getUsername).toList(),
                             usernamePointsMap,
                             usernameOpeningCompletedMap,
                             usernameRemainingCardsMap,
@@ -145,6 +143,49 @@ public class GameController {
                         event.getRemoteAddress()
                 );
             }
+        } catch (EndOfMatch signal) {
+            List<String> eliminatedPLayersUsernames = game.getCurrentMatch().getPlayers().stream()
+                    .filter(player -> !(game.getActivePlayers().contains(player)))
+                    .map(Player::getUsername)
+                    .toList();
+
+            // alert eliminated players
+            Player[] ranking = game.getRanking();
+            Map<String, Integer> usernamePointsMap = new HashMap<>();
+            for (Player player : ranking) {
+                usernamePointsMap.put(player.getUsername(), player.getPoints());
+            }
+            for (String username : eliminatedPLayersUsernames) {
+                ConnectionsManager.getInstance().sendEvent(
+                        new EndGameEvent(
+                                Arrays.stream(ranking).map(Player::getUsername).toList(),
+                                usernamePointsMap,
+                                false
+                        ),
+                        ConnectionsManager.getInstance().getAssociatedRemoteAddress(username)
+                );
+                ConnectionsManager.getInstance().removeUsernameFromUsernameConnectionMap(username);
+            }
+
+            // start a new match with the remaining players
+            ConnectionsManager.getInstance().sendEventBroadcast(new EndMatchEvent());
+            start(false);
+
+        } catch (EndOfGame signal) {
+            Player[] ranking = game.getRanking();
+            Map<String, Integer> usernamePointsMap = new HashMap<>();
+            for (Player player : ranking) {
+                usernamePointsMap.put(player.getUsername(), player.getPoints());
+            }
+
+            ConnectionsManager.getInstance().sendEventBroadcast(
+                    new EndGameEvent(
+                            Arrays.stream(ranking).map(Player::getUsername).toList(),
+                            usernamePointsMap,
+                            true
+                    )
+            );
+
         } catch (IllegalStateException exception) {
             ConnectionsManager.getInstance().sendEvent(
                     new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),

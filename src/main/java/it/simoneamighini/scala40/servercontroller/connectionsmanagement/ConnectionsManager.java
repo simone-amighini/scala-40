@@ -50,7 +50,7 @@ public class ConnectionsManager implements NetworkObserver {
         usernamesInOrder.add(username);
     }
 
-    void removeUsernameFromUsernameConnectionMap(String username) {
+    public void removeUsernameFromUsernameConnectionMap(String username) {
         usernameConnectionMap.remove(username);
         usernamesInOrder.remove(username);
     }

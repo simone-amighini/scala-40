@@ -339,6 +339,20 @@ public class MatchController implements SceneController, Initializable {
         );
     }
 
+    @Override
+    public void handle(EndMatchEvent event) {
+        // do nothing
+    }
+
+    @Override
+    public void handle(EndGameEvent event) {
+        Platform.runLater(
+                () -> {
+                    SceneLoader.changeScene("gameEnd.fxml");
+                }
+        );
+    }
+
     private void disableAllMatchRelatedButtons() {
         Platform.runLater(
                 () -> {
@@ -800,7 +814,7 @@ public class MatchController implements SceneController, Initializable {
                     titleLabel.setStyle("-fx-text-fill: rgb(64,64,64)");
                     playersInfoVBox.getChildren().add(titleLabel);
 
-                    for (String username : Data.getInstance().getUsernamePointsMap().keySet()) {
+                    for (String username : Data.getInstance().getUsernames()) {
                         StringBuilder builder = new StringBuilder();
                         builder.append(username).append(": ");
                         builder.append(Data.getInstance().getUsernamePointsMap().get(username));
