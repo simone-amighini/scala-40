@@ -1,6 +1,7 @@
 package it.simoneamighini.scala40.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 class AttachmentChecker implements Serializable {
@@ -13,17 +14,36 @@ class AttachmentChecker implements Serializable {
     boolean isAttachable(Card card) {
         for (Group group : match.getGroups()) {
             List<Card> currentGroupCards = group.getCards();
-            currentGroupCards.add(card);
+
+            List<Card> attachAtStartGroup = new ArrayList<>(currentGroupCards);
+            attachAtStartGroup.addFirst(card);
+
+            List<Card> attachAtEndGroup = new ArrayList<>(currentGroupCards);
+            attachAtEndGroup.addLast(card);
 
             try {
-                Group combination = new Combination(currentGroupCards);
+                new Combination(attachAtStartGroup, true);
+                return true;
+            } catch (InvalidGroupException ignored) {
+                // continue
+            }
+
+            try {
+                new Combination(attachAtEndGroup, true);
                 return true;
             } catch (InvalidGroupException ignored) {
                 // maybe the group is valid sequence: continue
             }
 
             try {
-                Group sequence = new Sequence(currentGroupCards);
+                new Sequence(attachAtStartGroup, true);
+                return true;
+            } catch (InvalidGroupException ignored) {
+                // continue
+            }
+
+            try {
+                new Sequence(attachAtEndGroup, true);
                 return true;
             } catch (InvalidGroupException ignored) {
                 // the group is not a valid combination nor sequence

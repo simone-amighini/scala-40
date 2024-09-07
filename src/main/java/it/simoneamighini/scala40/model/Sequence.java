@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sequence extends Group {
-    Sequence(List<Card> cards) throws InvalidGroupException {
+    Sequence(List<Card> cards, boolean attachmentMode) throws InvalidGroupException {
         super(cards);
 
         // perform check
@@ -19,7 +19,8 @@ public class Sequence extends Group {
 
         boolean betweenThreeAndFourteenCards = cards.size() >= 3 && cards.size() <= 14;
 
-        boolean noMoreThanOneJolly = jollyCards.size() <= 1;
+        // do not check this condition if performing a card attachment
+        boolean noMoreThanOneJolly = jollyCards.size() <= 1 || attachmentMode;
 
         boolean allCardsInTheRightOrder = true;
         boolean allCardsWithTheSameSuit = true;

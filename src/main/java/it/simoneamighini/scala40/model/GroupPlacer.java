@@ -12,7 +12,7 @@ class GroupPlacer implements Serializable {
 
     boolean place(List<Card> group) {
         try {
-            Group combination = new Combination(group);
+            Group combination = new Combination(group, false);
             match.addGroup(combination);
             return true;
         } catch (InvalidGroupException ignored) {
@@ -20,7 +20,7 @@ class GroupPlacer implements Serializable {
         }
 
         try {
-            Group sequence = new Sequence(group);
+            Group sequence = new Sequence(group, false);
             match.addGroup(sequence);
             return true;
         } catch (InvalidGroupException ignored) {

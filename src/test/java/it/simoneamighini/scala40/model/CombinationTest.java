@@ -32,7 +32,7 @@ class CombinationTest {
                 )
         );
 
-        assertDoesNotThrow(() -> new Combination(cards));
+        assertDoesNotThrow(() -> new Combination(cards, false));
     }
 
     @Test
@@ -59,7 +59,7 @@ class CombinationTest {
                 )
         );
 
-        assertDoesNotThrow(() -> new Combination(cards));
+        assertDoesNotThrow(() -> new Combination(cards, false));
     }
 
     @Test
@@ -93,7 +93,7 @@ class CombinationTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Combination(cards)
+                () -> new Combination(cards, false)
         );
     }
 
@@ -124,7 +124,7 @@ class CombinationTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Combination(cards)
+                () -> new Combination(cards, false)
         );
     }
 
@@ -150,7 +150,7 @@ class CombinationTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Combination(cards)
+                () -> new Combination(cards, false)
         );
     }
 
@@ -179,7 +179,7 @@ class CombinationTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Combination(cards)
+                () -> new Combination(cards, false)
         );
     }
 }

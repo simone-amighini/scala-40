@@ -16,7 +16,7 @@ class OpeningPlacer implements Serializable {
         List<Group> groupList = new ArrayList<>();
         for (List<Card> group : groups) {
             try {
-                Group combination = new Combination(group);
+                Group combination = new Combination(group, false);
                 groupList.add(combination);
                 continue;
             } catch (InvalidGroupException ignored) {
@@ -24,7 +24,7 @@ class OpeningPlacer implements Serializable {
             }
 
             try {
-                Group sequence = new Sequence(group);
+                Group sequence = new Sequence(group, false);
                 groupList.add(sequence);
                 continue;
             } catch (InvalidGroupException ignored) {

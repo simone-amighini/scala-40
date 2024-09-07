@@ -77,7 +77,7 @@ class SequenceTest {
                 )
         );
 
-        assertDoesNotThrow(() -> new Sequence(cards));
+        assertDoesNotThrow(() -> new Sequence(cards, false));
     }
 
     @Test
@@ -154,7 +154,7 @@ class SequenceTest {
                 )
         );
 
-        assertDoesNotThrow(() -> new Sequence(cards));
+        assertDoesNotThrow(() -> new Sequence(cards, false));
     }
 
     @Test
@@ -231,7 +231,7 @@ class SequenceTest {
                 )
         );
 
-        assertDoesNotThrow(() -> new Sequence(cards));
+        assertDoesNotThrow(() -> new Sequence(cards, false));
     }
 
     @Test
@@ -310,7 +310,7 @@ class SequenceTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Sequence(cards)
+                () -> new Sequence(cards, false)
         );
     }
 
@@ -346,7 +346,7 @@ class SequenceTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Sequence(cards)
+                () -> new Sequence(cards, false)
         );
     }
 
@@ -381,7 +381,7 @@ class SequenceTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Sequence(cards)
+                () -> new Sequence(cards, false)
         );
     }
 
@@ -412,7 +412,7 @@ class SequenceTest {
 
         assertThrows(
                 InvalidGroupException.class,
-                () -> new Sequence(cards)
+                () -> new Sequence(cards, false)
         );
     }
 }
