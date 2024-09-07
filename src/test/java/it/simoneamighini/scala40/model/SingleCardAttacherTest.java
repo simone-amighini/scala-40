@@ -15,7 +15,7 @@ class SingleCardAttacherTest {
         );
 
         try {
-            return new Combination(cards);
+            return new Combination(cards, false);
         } catch (InvalidGroupException exception) {
             throw new RuntimeException(exception);
         }
@@ -30,7 +30,7 @@ class SingleCardAttacherTest {
         );
 
         try {
-            return new Combination(cards);
+            return new Combination(cards, false);
         } catch (InvalidGroupException exception) {
             throw new RuntimeException(exception);
         }
@@ -53,7 +53,7 @@ class SingleCardAttacherTest {
         );
 
         try {
-            return new Sequence(cards);
+            return new Sequence(cards, false);
         } catch (InvalidGroupException exception) {
             throw new RuntimeException(exception);
         }

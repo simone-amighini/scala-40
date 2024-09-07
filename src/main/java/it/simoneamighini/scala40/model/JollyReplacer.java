@@ -28,7 +28,7 @@ class JollyReplacer implements Serializable {
             groupCards.set(jollyIndex, card);
 
             try {
-                Group combination = new Combination(groupCards);
+                Group combination = new Combination(groupCards, false);
                 match.updateGroup(group, combination);
                 return jollyCard;
             } catch (InvalidGroupException ignored) {
@@ -36,7 +36,7 @@ class JollyReplacer implements Serializable {
             }
 
             try {
-                Group sequence = new Sequence(groupCards);
+                Group sequence = new Sequence(groupCards, false);
                 match.updateGroup(group, sequence);
                 return jollyCard;
             } catch (InvalidGroupException ignored) {

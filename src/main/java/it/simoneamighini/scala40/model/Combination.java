@@ -3,7 +3,7 @@ package it.simoneamighini.scala40.model;
 import java.util.List;
 
 public class Combination extends Group {
-    Combination(List<Card> cards) throws InvalidGroupException {
+    Combination(List<Card> cards, boolean attachmentMode) throws InvalidGroupException {
         super(cards);
 
         // perform check
@@ -18,7 +18,8 @@ public class Combination extends Group {
 
         boolean threeOrFourCards = cards.size() == 3 || cards.size() == 4;
 
-        boolean noMoreThanOneJolly = jollyCards.size() <= 1;
+        // do not check this condition if performing a card attachment
+        boolean noMoreThanOneJolly = jollyCards.size() <= 1 || attachmentMode;
 
         boolean allFrenchCardsWithSameRank = frenchCards.stream()
                 .map(FrenchCard::getRank)

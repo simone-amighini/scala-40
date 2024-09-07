@@ -65,7 +65,7 @@ class GroupAttacher implements Serializable {
 
         Group newCombination;
         try {
-            newCombination = new Combination(cards);
+            newCombination = new Combination(cards, true);
             match.updateGroup(combination, newCombination);
             tempResult = true;
         } catch (InvalidGroupException exception) {
@@ -86,7 +86,7 @@ class GroupAttacher implements Serializable {
 
         Group newSequence;
         try {
-            newSequence = new Sequence(cards);
+            newSequence = new Sequence(cards, true);
             match.updateGroup(sequence, newSequence);
             tempResult = true;
         } catch (InvalidGroupException exception) {
