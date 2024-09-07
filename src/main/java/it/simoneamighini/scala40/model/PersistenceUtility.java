@@ -28,7 +28,7 @@ public class PersistenceUtility {
         return file.exists() && !file.isDirectory();
     }
 
-    private static void deleteSavedGame() {
+    public static void deleteSavedGame() {
         File file = new File(SAVED_GAME_FILE_NAME);
         file.delete();
     }

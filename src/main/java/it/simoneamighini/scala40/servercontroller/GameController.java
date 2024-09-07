@@ -186,6 +186,10 @@ public class GameController {
                     )
             );
 
+            ConnectionsManager.getInstance().reset();
+            reset();
+            PersistenceUtility.deleteSavedGame();
+
         } catch (IllegalStateException exception) {
             ConnectionsManager.getInstance().sendEvent(
                     new PlannedDisconnectionEvent(PlannedDisconnectionEvent.Cause.CLIENT_ERROR),
